@@ -6,7 +6,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0">
 <link rel="stylesheet" type="text/css" href="/css/common.css">
 
-<title>Title - PerlゼミのWeb開発入門</title>
+<title>Title - Mojoliciousスタートアップ - Perlによる新規Web開発</title>
 <meta name="description" content="#!/usr/bin/env perl">
   </head>
   <body>
@@ -14,7 +14,7 @@
       <div class="header">
         <!-- header -->
 <h1>
-  <a href="/">PerlゼミのWeb開発入門</a>
+  <a href="/">Mojoliciousスタートアップ - Perlによる新規Web開発</a>
 </h1>
 
       </div>
@@ -109,12 +109,10 @@
           <!-- side -->
 <div class="side-list">
   <div class="side-list-title">
-    Side Bar
+    目次
   </div>
   <ul>
-    <li>Foo</li>
-    <li>Bar</li>
-    <li>Baz</li>
+    <li><a href="/list.html">記事の一覧</a></li>
   </ul>
 </div>
 
