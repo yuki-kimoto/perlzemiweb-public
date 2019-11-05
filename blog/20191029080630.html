@@ -37,7 +37,10 @@
   この記事を読めば、セキュリティの専門家から見ても、だいじょうぶといえるような、セキュリティ的にも安心の会員登録とログイン機能を、手順を覚えれば実装できるようになります。
 </p>
 <p>
-  (この記事は、2019年におけるもっともよいやり方を試行錯誤しながら書いていますので、検証が必要です。2019年11月5日)
+  (この記事は、2019年におけるもっともよいやり方を試行錯誤しながら書いていますので、検証が必要です。)
+</p>
+<p>
+  (記事執筆途中。追加、修正あり。実際の全体の検証は未。最終更新2019年11月6日)
 </p>
 <h3>ログイン機能を使ったユーザー認証とは何か</h3>
 <p>
@@ -359,14 +362,17 @@ $c-&gt;session(session_id =&gt; $session_id);
 <pre>
 create table USER (
   ID int primary_key auto_increment,
-  CODE varchar(150) not null default '',
+  USER_ID varchar(150) not null default '',
   NAME varchar(150) not null default '',
   MAIL varchar(150) not null default '',
   SESSION_ID varchar(150),
   SESSION_EXPIRATION bigint not null default 0,
-  unique(CODE),
+  TEMP_REGIST_ID varchar(150),
+  TEMP_REGIST_EXPIRATION bigint not null default 0,
+  unique(USER_ID),
   unique(MAIL),
-  unique(SESSION_ID)
+  unique(SESSION_ID),
+  unique(TEMP_REGIST_ID)
 );
 </pre>
 <p>
@@ -376,7 +382,7 @@ create table USER (
   まず、テーブル名と列名が大文字であるのは、ちょっとタイピングは不便ですが、データとロジックを明確に分けられるという利点があります。Perlのロジックは、$userやget_userのように小文字のスネークケースで書かれるので、大文字のスネークケースにしておくと、実際にデータベースにアクセスしているデータの場所が、grepで検索した場合に、すぐにわかるということがあります。まぁ、これは、趣味の範囲内といえるので、プロジェクトの方針に従いましょう。
 </p>
 <p>
-  ユーザーIDが、int型でauto_incrementであるのは、ユーザーは、登録されるデータだからです。列を一意に識別できるIDを持たせています。CODEというのはkimotoのような、ユーザー名と呼ばれているものですが、木本裕紀のようなユーザー名の本名を区別するために、CODEという名前にしています。本名はNAMEに入ります。
+  ユーザーIDが、int型でauto_incrementであるのは、ユーザーは、登録されるデータだからです。列を一意に識別できるIDを持たせています。USER_IDというのはkimotoのような、ユーザーIDと呼ばれているものです。
 </p>
 <p>
   MAILはメールアドレスで、会員登録する場合は、メールを送信して、本人確認をするので、必要です。メールアドレスは重複がないようにユニーク制約をつけています。
@@ -482,6 +488,101 @@ if ($new_user_session_expiration &gt; $user_session_expiration + $one_day_second
   $sth-&gt;execute($new_user_session_expiration, $user_id);
 }
 </pre>
+<h3>会員登録機能の実装</h3>
+<p>
+  ユーザー認証によるログイン機能には、会員登録機能が必要です。会員登録機能を実装するにあたって、知っておく必要のある知識をまず解説します。
+</p>
+<h4>メールアドレスによる本人認証</h4>
+<p>
+  この記事では、一般的な方法であるメールアドレスによる本人認証を使って、新規会員登録を行います。
+</p>
+<p>
+  メールアドレスによる本人認証とは、メールアドレスはその人が所有しているので、メールを見ることができるのは、その人だけだということを根拠にした本人認証です。
+</p>
+<p>
+  メールのパスワードが漏洩してしまうと、それで終わりなので、最近は、電話番号などの、二重認証などが、大手のサイトなどで採用されていますよね。スタートアップするWebサイトは、メールアドレスによる本人認証から始めましょう。
+</p>
+<h4>会員登録画面に必要なユーザー情報</h4>
+<p>
+  会員登録画面に最低限必要なユーザー情報は、以下です。
+</p>
+<ul>
+  <li>ユーザーID(メールアドレスをユーザーIDにする場合は不要)</li>
+  <li>メールアドレス</li>
+  <li>パスワード</li>
+</ul>
+<p>
+  ユーザーIDを作成する場合は、ユーザーIDとメールアドレスとパスワードです。メールアドレスをユーザーIDにする場合は、メールアドレスとパスワードです。メールアドレスをユーザーIDにした場合でも、ユーザーの希望による、メールアドレスの変更は、可能ですので、安心してください。
+</p>
+<p>
+  以下の記事では、ユーザーIDを作成するという前提で、記事を書いていきます。
+</p>
+<p>
+  ビジネスの種類によっては「氏名」「住所」「電話番号」なども入力してもらうとよいでしょう。
+</p>
+<h4>ユーザーテーブルの作成</h4>
+<p>
+  ユーザーIDとメールアドレスの対応は、1対1であって、ユーザーIDは一意で、メールアドレスも一意である必要があります。アプリケーションでチェックを行うことは、必要ですが、データの整合性が完全に取れているということが大切ですですので、ユーザーテーブルは、以下のように作成します。
+</p>
+<p>
+  これは上記「セッション管理のためのユーザーテーブル定義」で解説したものと同じです。IDは、行を一意に定義するもので、ユーザーIDではなく、整数が入ります。USER_IDにkimotoのようなユーザーIDが入ります。
+</p>
+<p>
+  またメールアドレスによる本人認証は、本人にメールアドレスを送信して、送信された仮登録IDを使ったリンクからアクセスしてもらうことで行います。そこで、ユーザーテーブルには、仮登録ID「TEMP_REGIST_ID」と仮登録の有効期限「TEMP_REGIST_EXPIRATION」を持たせています。
+</p>
+<p>
+  mysqlによるユーザーテーブルの作成例です。
+</p>
+<pre>
+create table USER (
+  ID int primary_key auto_increment,
+  USER_ID varchar(150) not null default '',
+  NAME varchar(150) not null default '',
+  MAIL varchar(150) not null default '',
+  SESSION_ID varchar(150),
+  SESSION_EXPIRATION bigint not null default 0,
+  TEMP_REGIST_ID varchar(150),
+  TEMP_REGIST_EXPIRATION bigint not null default 0,
+  unique(USER_ID),
+  unique(MAIL),
+  unique(SESSION_ID),
+  unique(TEMP_REGIST_ID)
+);
+</pre>
+<h4>会員登録画面の作成</h4>
+<p>
+  会員登録画面には、ユーザーIDとメールアドレスとパスワードを指定してもらう必要があります。
+</p>
+<p>
+  Mojoliciousのサンプルを使った会員登録画面の例です。フォーム送信する場合はPOSTメソッドを使います。actionは、自分自身のURLを指定して、メソッドはPOSTで、オペレーションとして「temp-regist」を指定して、分岐できるようにしています。
+</p>
+<p>
+  hidden_fieldは隠しフィールドを作成するMojoliciousの関数です。text_field、password_fieldも同じです。Mojoliciousのフォームヘルパーは、バリデーションで値が間違っていた場合など、そのページに戻らなければならなかった場合に、値を自動で復元してくれるという機能があります。
+</p>
+<pre>
+&lt;div class="login-form"&gt;
+  &lt;form action="&lt;% url_for %&gt;" method="POST"&gt;
+    &lt;div&gt;
+      &lt;%= hidden_field op =&gt; 'temp-regist' %&gt;
+    &lt;/div&gt;
+    &lt;div&gt;
+      ユーザーID
+      &lt;%= text_field 'user-id' %&gt;
+    &lt;/div&gt;
+    &lt;div&gt;
+      メールアドレス
+      &lt;%= text_field 'mail' %&gt;
+    &lt;/div&gt;
+    &lt;div&gt;
+      パスワード
+      &lt;%= password_field 'password' %&gt;
+    &lt;/div&gt;
+    &lt;div&gt;
+      &lt;input type="submit" value="送信"&gt;
+    &lt;/div&gt;
+  &lt;/form&gt;
+&lt;/div&gt;
+</pre>
 <h3>検討事項</h3>
 <p>
   セキュリティの専門家の方に聞きたいこと。
@@ -491,9 +592,6 @@ if ($new_user_session_expiration &gt; $user_session_expiration + $one_day_second
 </p>
 <p>
   セッションIDがSHA-512の場合に、128文字になるが、不具合がでてくる事象はないか?
-</p>
-<p>
-  (記事執筆途中。追加、修正あり。実際の全体の検証は未。最終更新2019年11月1日)
 </p>
 
   </div>
