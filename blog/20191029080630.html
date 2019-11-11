@@ -62,7 +62,7 @@
   (この記事は、2019年におけるもっともよいやり方を試行錯誤しながら書いていますので、検証が必要です。)
 </p>
 <p>
-  (記事執筆途中。追加、修正あり。実際の全体の検証は未。最終更新2019年11月6日)
+  (記事執筆途中。追加、修正あり。実際の全体の検証は未。最終更新2019年11月12日)
 </p>
 <h3>ログイン機能を使ったユーザー認証とは何か</h3>
 <p>
@@ -189,8 +189,8 @@ my $hash_value = hash_func($value);
 <pre>
 # 登録時にハッシュ化されたパスワードを作る
 sub signup {
-    my $self = shift;
-    my $crypted_pass = $self-&gt;bcrypt( $self-&gt;param('password') );
+    my $c = shift;
+    my $crypted_pass = $c-&gt;bcrypt( $self-&gt;param('password') );
     ...
 }
 
@@ -199,7 +199,7 @@ sub login {
     my $self = shift;
     my $entered_pass = $self-&gt;param('password');
     my $crypted_pass = $self-&gt;get_password_from_db();
-    if ( $self-&gt;bcrypt_validate( $entered_pass, $crypted_pass ) ) {
+    if ( $c-&gt;bcrypt_validate( $entered_pass, $crypted_pass ) ) {
  
         # Authenticated
         ...;
@@ -384,14 +384,15 @@ $c-&gt;session(session_id =&gt; $session_id);
 <pre>
 create table USER (
   ID int primary_key auto_increment,
-  USER_ID varchar(150) not null default '',
+  CODE varchar(150) not null default '',
   NAME varchar(150) not null default '',
   MAIL varchar(150) not null default '',
   SESSION_ID varchar(150),
   SESSION_EXPIRATION bigint not null default 0,
   TEMP_REGIST_ID varchar(150),
   TEMP_REGIST_EXPIRATION bigint not null default 0,
-  unique(USER_ID),
+  AUTHENTICATED tiny int default 0,
+  unique(CODE),
   unique(MAIL),
   unique(SESSION_ID),
   unique(TEMP_REGIST_ID)
@@ -404,7 +405,7 @@ create table USER (
   まず、テーブル名と列名が大文字であるのは、ちょっとタイピングは不便ですが、データとロジックを明確に分けられるという利点があります。Perlのロジックは、$userやget_userのように小文字のスネークケースで書かれるので、大文字のスネークケースにしておくと、実際にデータベースにアクセスしているデータの場所が、grepで検索した場合に、すぐにわかるということがあります。まぁ、これは、趣味の範囲内といえるので、プロジェクトの方針に従いましょう。
 </p>
 <p>
-  ユーザーIDが、int型でauto_incrementであるのは、ユーザーは、登録されるデータだからです。列を一意に識別できるIDを持たせています。USER_IDというのはkimotoのような、ユーザーIDと呼ばれているものです。
+  ユーザーIDが、int型でauto_incrementであるのは、ユーザーは、登録されるデータだからです。列を一意に識別できるIDを持たせています。CODEというのはkimotoのような、ユーザーIDと呼ばれているものです。IDは行を識別する情報として利用しているので、ユーザーIDはCODEに保存しています。
 </p>
 <p>
   MAILはメールアドレスで、会員登録する場合は、メールを送信して、本人確認をするので、必要です。メールアドレスは重複がないようにユニーク制約をつけています。
@@ -547,7 +548,7 @@ if ($new_user_session_expiration &gt; $user_session_expiration + $one_day_second
   ユーザーIDとメールアドレスの対応は、1対1であって、ユーザーIDは一意で、メールアドレスも一意である必要があります。アプリケーションでチェックを行うことは、必要ですが、データの整合性が完全に取れているということが大切ですですので、ユーザーテーブルは、以下のように作成します。
 </p>
 <p>
-  これは上記「セッション管理のためのユーザーテーブル定義」で解説したものと同じです。IDは、行を一意に定義するもので、ユーザーIDではなく、整数が入ります。USER_IDにkimotoのようなユーザーIDが入ります。
+  これは上記「セッション管理のためのユーザーテーブル定義」で解説したものと同じです。IDは、行を一意に定義するもので、ユーザーIDではなく、整数が入ります。CODEにkimotoのようなユーザーIDが入ります。
 </p>
 <p>
   またメールアドレスによる本人認証は、本人にメールアドレスを送信して、送信された仮登録IDを使ったリンクからアクセスしてもらうことで行います。そこで、ユーザーテーブルには、仮登録ID「TEMP_REGIST_ID」と仮登録の有効期限「TEMP_REGIST_EXPIRATION」を持たせています。
@@ -558,14 +559,16 @@ if ($new_user_session_expiration &gt; $user_session_expiration + $one_day_second
 <pre>
 create table USER (
   ID int primary_key auto_increment,
-  USER_ID varchar(150) not null default '',
+  CODE varchar(150) not null default '',
+  PASSWORD_HASH varchar(150) not null default '',
   NAME varchar(150) not null default '',
   MAIL varchar(150) not null default '',
   SESSION_ID varchar(150),
   SESSION_EXPIRATION bigint not null default 0,
   TEMP_REGIST_ID varchar(150),
   TEMP_REGIST_EXPIRATION bigint not null default 0,
-  unique(USER_ID),
+  AUTHENTICATED tiny int default 0,
+  unique(CODE),
   unique(MAIL),
   unique(SESSION_ID),
   unique(TEMP_REGIST_ID)
@@ -611,8 +614,9 @@ create table USER (
 </p>
 <ul>
   <li>ユーザーIDを構成する文字(この例では、英数字とアンダーバー)の1文字以上で構成されていること</li>
-  <li>ユーザーIDがすでに存在するユーザーIDと重複しないこと</li>
-  <li>ユーザーIDの長さがデータベースのUSER_ID列の長さに収まること</li>
+  <li>ユーザーIDが、すでに存在するユーザーIDと重複しないこと</li>
+  <li>メールアドレスが、認証済みのすでに存在するメールアドレスと重複しないこと</li>
+  <li>ユーザーIDの長さがデータベースのCODE列の長さに収まること</li>
 </ul>
 <p>
   ユーザーIDは、一意でなければならないので、これをチェックするために、データベースにアクセスする必要があることに注意しましょう。
@@ -637,12 +641,22 @@ if ($user_id =~ /^[a-zA-Z0-9_]+$/) {
   else {
 
     # ユーザーIDが重複していないことをチェック
-    my $sth = $dbi-&gt;prepare('select USER_ID from USER where USER_ID = ?');
+    my $sth = $dbi-&gt;prepare('select CODE from USER where CODE = ?');
     $sth-&gt;execute($user_id);
     my $user = $sth-&gt;fetchrow_hashref;
     $sth-&gt;finish;
     if ($user) {
       $errors-&gt;{user_id} = 'すでに存在するユーザーです。';
+    }
+    else {
+      # メールアドレスが重複していないことをチェック
+      my $sth = $dbi-&gt;prepare('select MAIL from USER where MAIL = ? and AUTHENTICATED = 1');
+      $sth-&gt;execute($mail);
+      my $user = $sth-&gt;fetchrow_hashref;
+      $sth-&gt;finish;
+      if ($user) {
+        $errors-&gt;{user_id} = 'すでに登録されているメールアドレスです。';
+      }
     }
   }
 }
@@ -654,7 +668,7 @@ else {
   ユーザーIDは「a-zA-Z0-9_」の一文字以上で構成しますが、このチェックはPerlの正規表現を使って行っています。
 </p>
 <p>
-  ユーザーIDの長さのチェックは、USER_IDの長さが150文字なので、きりのよいところで100にしています。100文字あれば、十分でしょう。
+  ユーザーIDの長さのチェックは、CODEの長さが150文字なので、きりのよいところで100にしています。100文字あれば、十分でしょう。
 </p>
 <p>
   データベースにアクセスしてユーザーに重複がないことを確認しています。
@@ -717,7 +731,7 @@ $ D d
   パスワードの長さによって、安全性がわかるUIであれば、より親切でしょう。
 </p>
 <p>
-  パスワードは、ユーザーテーブルのPASSWORDに平文で保存されるわけではなくbcryptによって、ハッシュ化されたものが保存されるので、最大長のチェックはなくても大丈夫です。
+  パスワードは、ユーザーテーブルのPASSWORD_HASHに平文で保存されるわけではなくbcryptによって、ハッシュ化されたものが保存されるので、最大長のチェックはなくても大丈夫です。
 </p>
 <p>
   ではMojoliciousで、サンプルを書いてみましょう。
@@ -733,6 +747,68 @@ unless ($password =~ /^\p{PosixGraph}{8,}$/) {
 <p>
   「\p{PosixGraph}」は、ASCIIコードのグラフィック文字を表現する正規表現の文字クラスです。量指定子を組み合わせて、グラフィック文字の8文字以上であることを確認しています。
 </p>
+<h4>パスワードのハッシュ化</h4>
+<p>
+  パスワードはbcryptを使ってハッシュ化します。
+</p>
+<pre>
+# パスワードのハッシュ化
+my $password_hash = $c-&gt;bcrypt($password);
+</pre>
+<h4>メールアドレスのチェック</h4>
+<p>
+  メールアドレスのチェックは、厳密にやることはあまり意味がないような気もします。なぜなら、メールアドレスは、実際にユーザーに到達するまで、正しいかどうかがわからないからです。
+</p>
+<p>
+  ここではメールアドレスのチェックとして「@」が入っていることをユーザーのために確認する程度にとどめておきたいと思います。
+</p>
+<pre>
+my $mail = param('mail');
+
+# メールアドレスに@が入っていることを確認
+unless ($mail =~ /\@/) {
+  $errors-&gt;{mail} = 'メールアドレスを正しく入力してください。';
+}
+</pre>
+<h4>ユーザーデータの保存と仮登録IDの発行</h4>
+<p>
+  チェックしたユーザーデータをデータベースに保存します。このとき同時に仮登録に利用する一時的な仮登録IDを、発行して、データベースに保存します。
+</p>
+<p>
+  仮登録IDは、セッションIDの生成方法と同じでよいですが、メールの本文の折り返しでリンクを正しくクリックできなくなるという不安がありますので、Outlookの既定の折り返し文字数の76文字以内で生成しておくことにします。SHA1で生成して、長さは40文字です。
+</p>
+<pre>
+# 仮登録IDを作成
+my $time = time;
+my $rand = int rand 1_000_000;
+my $temp_regist_id = sha1_hex($user_id . $time . $rand);
+</pre>
+<p>
+  生成される仮登録IDの例
+</p>
+<pre>
+e182aa93605c82a472c4986f2749b111f35042f2
+</pre>
+<p>
+  次に仮登録IDの有効期間を作成します。有効期間は24時間とします。
+</p>
+<pre>
+# 仮登録IDの有効期間は、24時間後。
+my $one_day_seconds = (60 * 60 * 24);
+my $temp_regist_expiration = time + $one_day_seconds;
+</pre>
+<!--
+<p>
+  では、ユーザー情報と仮登録ID、仮登録有効期限をユーザーテーブルに保存しましょう。このとき一つ注意しなければならないのは、仮登録しているユーザーが、もう一度仮登録を行ったときの処理を書いておく必要があるということです。
+</p>
+<pre>
+# ユーザー情報、仮登録ID、仮登録有効期限をユーザーテーブルに保存
+my $sth = $dbi-&gt;prepare('insert into USER (set CDOE = ?, PASSWORD_HASH = ?, MAIL = ?, TEMP_REGIST_ID = ?, TEMP_REGIST_EXPIRATION = ?');
+$sth-&gt;execute($user_id, $password_hash, $temp_regist_id, $temp_regist_expirasession_id, $temp_regist_expiration);
+</pre>
+<p>
+  -->
+</p>
 <h3>注意事項</h3>
 <p>
   サンプルに関する注意。DBIとあるのは、実際に利用する場合は、DBIx::ConnectorかDBIx::Handlerと読み変えてください。Web開発でDBIを使う場合は、接続管理をしてくれるモジュールが必要になるからです。
@@ -741,6 +817,9 @@ unless ($password =~ /^\p{PosixGraph}{8,}$/) {
   簡易的に書くために、データベースの処理に関しては、例外処理を行っていないので注意してください。実際に書く場合は、例外処理を追加するか、例外処理を自動で行ってくれるO/Rマッパーを利用してください。
 </p>
 <h3>検討事項</h3>
+<p>
+  ユーザーテーブル、仮登録ユーザーテーブル、ユーザー認証テーブルに分けた方がよいかも。
+</p>
 <p>
   セキュリティの専門家の方に聞きたいこと。
 </p>

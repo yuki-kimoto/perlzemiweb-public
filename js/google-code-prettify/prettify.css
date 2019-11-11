@@ -1,4 +1,4 @@
-.com { color: #666; font-weight:bold }
+.com { color: #000; letter-spacing:1px; }
 .lit { color: #195f91; }
 .pun, .opn, .clo { color: #93a1a1; }
 .fun { color: #dc322f; }
