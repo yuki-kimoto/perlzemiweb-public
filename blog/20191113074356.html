@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <!-- meta -->
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0">
+<link rel="stylesheet" type="text/css" href="/css/common.css">
+
+<link rel="shortcut icon" href="/images/mojo-startup-logo.png">
+
+<script type="text/javascript" src="/js/jquery-1.9.0.min.js"></script>
+<script type="text/javascript" src="/js/google-code-prettify/prettify.js"></script>
+<link  type="text/css" rel="stylesheet" href="/js/google-code-prettify/prettify.css"/>
+<script>
+  $(function(){
+    // google code prettifyの有効化
+    $("pre").addClass("prettyprint");
+    function init(event){
+      prettyPrint();
+    }
+    if(window.addEventListener)window.addEventListener("load",init,false);
+    else if(window.attachEvent)window.attachEvent("onload",init);
+    
+    $(".to-top").click(function() {
+      // ページの一番上までスクロールさせます。
+      $('body, html').animate({scrollTop: 0}, 300, 'linear');;
+    });
+  });
+</script>
+
+<title>データベースのテーブル名とフィールド名の命名規約 - Mojoliciousスタートアップ - Perlによる新規Web開発</title>
+<meta name="description" content="Mojoliciousスタートアップでは、ビジネスのスタートアップを始める方に向けて、データベースのテーブル名とフィールド名の命名規約をひとつ示したいと考えています。">
+  </head>
+  <body>
+    <div class="container">
+      <div class="header">
+        <!-- header -->
+<h1>
+  <a href="/">Mojoliciousスタートアップ - Perlによる新規Web開発</a>
+</h1>
+
+      </div>
+      <div class="main">
+        <div class="content">
+          <div class="entry">
+  <div class="top">
+    <!-- top -->
+
+  </div>
+  <div class="middle">
+    <h2><a href="/blog/20191113074356.html">データベースのテーブル名とフィールド名の命名規約</a></h2>
+<p>
+  Mojoliciousスタートアップでは、ビジネスのスタートアップを始める方に向けて、データベースのテーブル名とフィールド名の命名規約をひとつ示したいと考えています。
+</p>
+<p>
+  データベースのテーブル名と列名は自由に決めることができますが、プロジェクトで、一つの命名規約があれば、一貫して名前をつけることができ、悩むことが少なくなります。
+</p>
+<p>
+  良くまとまっているものとして、以下の記事を発見しましたので、これを翻訳して、紹介します。YiiはPHPのWebフレームワークのひとつです。
+</p>
+<blockquote>
+<p>
+  <a href="https://www.yiiframework.com/wiki/227/guidelines-for-good-schema-design">よいスキーマデザインのためのガイドライン - YiiフレームワークWiki</a>
+</p>
+</blockquote>
+<p>
+  YiiとあるところはMojolicious、ActiveRecordとあるところはPerlのDBIあるいはO/Rマッパーと読み替えてください。Mojoliciousスタートアップ用に、各所の補足を入れました。
+</p>
+<ul>
+  <li>複数形ではなく単数形でデータベースのテーブルに名前を付ける</ li>
+  <li>フィールド名の前にDBテーブル名を追加しない</ li>
+  <li>モデルクラス名にテーブルプレフィックスを含めない</ li>
+  <li>テーブルのID列に「id」という名前を付けます</ li>
+  <li>意味のある主キー名を避ける</ li>
+  <li>データベーススキーマで外部キーの関係を定義する</ li>
+  <li>「id」で終わる外部キーフィールドに名前を付ける</ li>
+  <li>単数形/複数形の性質を反映する名前関係を行う</ li>
+</ul>
+<h3>初めに</h3>
+<p>
+  事実上、すべてのYiiアプリケーションはデータベース上に構築され、YiiはDBに対処する方法が非常に柔軟ですが、設計をうまく選択することによって、他の設計よりも便利になります。
+</p>
+<p>
+  最初に、そして最も広く、YiiアプリケーションはActiveRecordを非常に頻繁に使用するため、設計上の考慮事項は、複雑なSQLクエリを作成する人間ではなく、ActiveRecordの使用の最適化を中心に展開します。実際、これらの設計ノートの多くは、SQLに適したスキーマを作成するためのベストプラクティスと直接矛盾しています。
+</p>
+<p>
+  しかし、これらのベストプラクティスの大部分は、他の人が読み取って理解できるコードを作成することに関するものです。ネーミングは意味を伝えますが、一貫性のない規則によって、従うのがはるかに難しくなります。
+</p>
+<p>
+  これは、フォーラムや#yiiチャンネルで助けを求めている場合に特に当てはまります。良い意味を反映しない奇妙な名前を使用すると、コードが何をしているのかを明確にする多くの質問が得られます。あなたの実際の問題。
+</p>
+<p>
+  一貫性が重要です。
+</p>
+<p>
+  ただし、これらはルールではなく単なるガイドラインであり、従わなくてもコードは機能します。しかし、それらを採用すれば、より簡単な道が開けます。
+</p>
+<p>
+  <b>補足</b>
+</p>
+<p>
+  ActiveRecordは、Yiiに含まれているデフォルトのO/Rマッパーです。Mojoliciousスタートップの場合は、PerlのDBIあるいはO/Rマッパーと読み替えてください。
+</p>
+<h3>データベーステーブルに複数ではなく単数で名前を付ける</h3>
+<p>
+  SQLテーブルは多くのものを保持していると考えられますが、モデルはそれらの1つに過ぎません。$model = new Comments()を見るのは奇妙に思えます。関係を定義するときなどに、この奇妙さが再び現れます。
+</p>
+<p>
+  テーブルを「コメントたち(comments)」ではなく「コメント(comment)」と呼び、「請求書たち(invoices)」ではなく「請求書(invoice)」と呼んでください。デルクラス名(コメント、請求書)にそのまま反映します。
+</p>
+<p>
+  DBスキーマを絶対に変更できない場合は、少なくともYiiモデルクラス名を変更して適切なケースを反映しますが、コードに余分なコメントを追加して、ユーザーにこの不一致を意識させます。
+</p>
+<p>
+  <b>補足</b>
+</p>
+<p>
+  要点は、テーブル名を単数形にするということです。
+</p>
+<pre>
+comment # OK
+comments # Not OK
+
+invoice # OK
+invoices # Not OK
+</pre>
+<h3>フィールド名の前にDBテーブル名を追加しないでください</h3>
+<p>
+  この方法は、従来のSQLスキーマ設計では一般的ですが、ActiveRecordを使用する場合は面倒です。カテゴリテーブルの例です。
+</p>
+<pre>
+-- NO                              -- YES
+create table category (            create table category(
+    category_id    INTEGER ...,        id    INTEGER ...,
+    category_name  VARCHAR ...,        name  VARCHAR ...,
+    category_value INTEGER             value INTEGER
+);                                 );
+</pre>
+<pre>
+&lt;?php
+$category = new Category();
+// YUCK                            // BETTER
+$category-&gt;category_id             $category-&gt;id
+$category-&gt;category_name           $category-&gt;name
+$category-&gt;category_value          $category-&gt;value
+</pre>
+<p>
+  「長い」方法で行うと、手作りのSQLクエリが少し読みやすくなりますが、ActiveRecordでの使用はあまり便利ではありません。
+</p>
+<p>
+  <b>補足</b>
+</p>
+<p>
+  要点は、フィールド名の前に、テーブル名を付けないということです。
+</p>
+<h3>モデルクラス名にテーブルプレフィックスを含めないでください</h3>
+<p>
+  Yiiはテーブルプレフィックスの概念をサポートしています。これは、すべてのアプリケーションが単一のデータベースを共有する共有ホスティング環境で役立ちます。ブログのテーブル名にblog_を、タイムキーピングアプリケーションのテーブル名にtime_を付けるなどして、すべて競合することなく同じデータベースに格納できます。
+</p>
+<p>
+  プレフィックスtbl_は、多くのチュートリアルやサンプルでよく見られます。
+</p>
+<p>
+  ただし、競合を回避する必要性は同じではないため、クラスにこれらのプレフィックスを含めることはできません。ブログアプリケーションは時間管理アプリケーションとは異なります。
+</p>
+<pre>
+class TblComment extends CActiveRecord {       // NO
+class Comment extends CActiveRecord {          // YES
+</pre>
+<p>
+  コードの至る所に接頭辞を見るのは非常に気が散ります。
+</p>
+<p>
+  <b>補足</b>
+</p>
+<p>
+  これは、ActiveRecordのクラスについての説明なので、もし仮に、Perlでテーブル名に対応するモデル名をつける場合に、テーブルプレフィックスを含めないようにするという意味です。
+</p>
+<h3>テーブルのID列に「id」という名前を付けてください</h3>
+<p>
+  多くのテーブルには、独自の独立した単一列の一意のプライマリキーがあり(int NOT NULL AUTO_INCREMENT PRIMARY KEYが一般的な例です)、id(commentidまたはpostidではない)という名前の場合、少しスムーズに動作します。
+</p>
+<p>
+  Yiiはデータベーススキーマを読み取って主キーを特定しますが、システムの他の部分は従うことができず、idであるキーに明示的に依存することはできません。
+</p>
+<p>
+  例：CArrayDataProviderはキーがidであると想定しています。keyField属性でオーバーライドできますが、最初から、それを必要とすることを避ける方が良いです。
+</p>
+<p>
+  たとえば、テーブルに複数列のプライマリキーがある場合、またはテーブルのプライマリキーが別のテーブルのIDに対する外部キーである場合、このルールは適用されません。
+</p>
+<p>
+  <b>補足</b>
+</p>
+<p>
+  要点は、行を識別するIDは、idという名前にしましょうということです。
+</p>
+<h3>意味のある主キー名を避ける</h3>
+<p>
+  古典的な設計ミスは、実際の意味を持つ主キーを持つテーブルを作成することです。この例では、ユーザーテーブルはユーザー名を主キーにします。
+</p>
+<pre>
+-- こんな風にはしないで
+CREATE TABLE user (
+    name   VARCHAR(16) PRIMARY KEY,  -- bad idea
+    email  VARCHAR...
+    ...
+)
+</pre>
+<p>
+  これには2つの難点があります。
+</p>
+<p>
+  このフィールドを4バイトの整数ではなく16文字で構成しているため、他のフィールドからこのフィールドを参照するのははるかに効率的です。これは、多くの参照がある大規模なアプリケーションで実際のパフォーマンスの問題になる可能性があります。
+</p>
+<p>
+  このシステムで外部キー制約が有効になっている場合、ユーザーがユーザー名を変更することは非常に困難です。テーブルフィールドとすべての参照を同時に変更する必要があり、それが可能であれば費用がかかります。
+</p>
+<p>
+  はるかに良いのは、不可欠な主キーを作成し、名前を一意にすることです。
+</p>
+<pre>
+-- much better
+CREATE TABLE user (
+   id     INTEGER PRIMARY KEY AUTO_INCREMENT,
+   name   VARCHAR(32) NOT NULL UNIQUE,
+   email  ...
+   ...
+);
+</pre>
+<p>
+  この方法では、個人のユーザー名を変更すると、この1つのレコードのみが更新されます。
+</p>
+<p>
+  <b>補足</b>
+</p>
+<p>
+  要点は、意味がなく行を識別するためだけのidを持たせて、それをプライマリーキーで、オートインクリメントにしましょうということです。意味のある主キー(この例ではname)には、ユニーク制約を設定します。
+</p>
+<h3>データベーススキーマで外部キー関係を定義する</h3>
+<p>
+  ほとんどのデータベースでは、データベースがテーブル間の関係を定義できるため、このフィールドには他のテーブルのプライマリキーを指すIDが保持されます。これらは外部キーであり、他の誰かがそれを指している場合に行を削除できないようにすることで、参照整合性を提供します。
+</p>
+<p>
+  MySQLのInnoDBは外部キー制約を強制します。MyISAMではそれらを定義できますが、強制しません。 Yiiはスキーマからこれらの関係を読み取る方法を知っており、Gii / Giixツールは自動的に関係を作成します。
+</p>
+<p>
+  しかし、Yiiがそれらを考慮しなくても、外部キーはデータベースの参照整合性を維持するための重要な部分です。それらについて学ぶ方法に関する多くのチュートリアルがウェブ上にあります。
+</p>
+<p>
+  <b>補足</b>
+</p>
+<p>
+  要点は、もし、データベーススキーマで外部キー制約をつける場合は、O/Rマッパー側ではなくって、データベース側でつけてくださいという意味です。
+</p>
+<h3>「id」で終わる外部キーフィールドに名前を付けてる</h3>
+<p>
+  前のメモに関連して、ユーザーのIDを保持するフィールドがある場合、userではなくuseridフィールドを呼び出します。これは、テーブルに含めるすべての外部キーについて、ほぼ確実にリレーションを定義することを望むためです。
+</p>
+<p>
+  Yiiでは、クラス変数、DBフィールド、仮想属性、リレーションはすべて単一のネームスペースを共有するため、$model->userをテーブルの外部キーとリレーションの両方にすることはできません。
+</p>
+<p>
+  FKユーザーIDを呼び出すことにより、$model->userのBELONGS_TO関係が自然かつ簡単に形成されます。
+</p>
+<pre>
+class Post extends CActiveRecord {
+
+   public function relations()
+   {
+       return array(
+          'user' =&gt; array(self::BELONGS_TO, 'User', 'userid')
+       );
+   }
+</pre>
+<p>
+  注：idの代わりにIdまたは_idを使用することを好む人もいます。これは厳密には個人的な好みの問題ですが、一貫している必要があります。
+</p>
+<p>
+  <b>補足</b>
+</p>
+<p>
+  要点は、外部キーの名前は、テーブル名の後ろに「id」または「Id」または「_id」をつけて、命名規則を一貫しましょうということです。Mojoliciousスタートアップでは、外部キーの名前として「_id」をテーブル名の後ろにつける方法を使うことにします。
+</p>
+<h3>単数/複数の性質を反映する名前関係を行う</h3>
+<p>
+  一貫性というテーマを継続し、コードを他の人が読みやすくするために、関係は名前に単数/複数を反映する必要があります。
+</p>
+<pre>
+HAS_ONE - 単一のモデルを返します：singular
+BELONGS_TO - 単一のモデルを返します：singular
+HAS_MANY - モデルの配列を返します：複数形
+MANY_MANY - モデルの配列を返します：複数形
+</pre>
+<p>
+  配列を返すリレーションの場合、モデルは1つだけかもしれませんが、配列であるという事実が複数名を保証することに注意してください。
+</p>
+<p>
+  リレーションが配列を返すのかモデルを返すのかを調べるだけで、いつでも通知できるはずです。
+</p>
+<pre>
+$model-&gt;post
+$model-&gt;comments
+$model-&gt;author
+$model-&gt;members
+</pre>
+<p>
+  調べる必要がある場合、コードの読み取りと保守がはるかに難しくなります。
+</p>
+<p>
+  <b>補足</b>
+</p>
+<p>
+  これは、ActiveRecordの1対1、1対多、多対1、多対多を定義するときのメソッド名の命名規則についての話です。
+</p>
+<p>
+  もしPerlのO/Rマッパーが、類似の機能を持っていた場合は、参考にできます。
+</p>
+
+  </div>
+  <div class="bottom">
+    <!-- bottom -->
+
+  </div>
+</div>
+
+        </div>
+        <div class="side">
+          <!-- side -->
+<div class="side-list">
+  <div class="side-list-title">
+    目次
+  </div>
+  <ul>
+    <li><a href="/list.html">記事の一覧</a></li>
+  </ul>
+</div>
+
+        </div>
+      </div>
+      <div class="footer">
+        <!-- footer -->
+<a href="http://www.perlzemi.com">Perlゼミ公式</a> & <a href="https://jp.giblog.net/">Giblog</a>
+
+      </div>
+    </div>
+  </body>
+</html>
