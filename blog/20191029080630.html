@@ -62,7 +62,7 @@
   (この記事は、2019年におけるもっともよいやり方を試行錯誤しながら書いていますので、検証が必要です。)
 </p>
 <p>
-  (記事執筆途中。追加、修正あり。実際の全体の検証は未。最終更新2019年11月12日)
+  (記事執筆途中。追加、修正あり。実際の全体の検証は未。最終更新2019年11月14日)
 </p>
 <h3>ログイン機能を使ったユーザー認証とは何か</h3>
 <p>
@@ -382,27 +382,27 @@ $c-&gt;session(session_id =&gt; $session_id);
   ユーザーテーブルは以下のようにします。MySQLの設定でデータベースはInnoDBで、文字コードがutf8mb4であるとします。必ずInnoDBをデフォルトのテーブルのエンジンとして、設定してください。InnoDBは行ロックの機能を持っており、テーブル全体をロックしません。
 </p>
 <pre>
-create table USER (
-  ID int primary_key auto_increment,
-  CODE varchar(150) not null default '',
-  NAME varchar(150) not null default '',
-  MAIL varchar(150) not null default '',
-  SESSION_ID varchar(150),
-  SESSION_EXPIRATION bigint not null default 0,
-  TEMP_REGIST_ID varchar(150),
-  TEMP_REGIST_EXPIRATION bigint not null default 0,
-  AUTHENTICATED tiny int default 0,
-  unique(CODE),
-  unique(MAIL),
-  unique(SESSION_ID),
-  unique(TEMP_REGIST_ID)
+create table user (
+  id int primary_key auto_increment,
+  code varchar(150) not null default '',
+  name varchar(150) not null default '',
+  mail varchar(150) not null default '',
+  session_id varchar(150),
+  session_expiration bigint not null default 0,
+  temp_regist_id varchar(150),
+  temp_regist_expiration bigint not null default 0,
+  authenticated tiny int default 0,
+  unique(code),
+  unique(mail),
+  unique(session_id),
+  unique(temp_regist_id)
 );
 </pre>
 <p>
   主要な点は、セッションに関する部分ですが、どのような考えに基づいて、このユーザーテーブルなのかを簡潔に書きます。
 </p>
 <p>
-  まず、テーブル名と列名が大文字であるのは、ちょっとタイピングは不便ですが、データとロジックを明確に分けられるという利点があります。Perlのロジックは、$userやget_userのように小文字のスネークケースで書かれるので、大文字のスネークケースにしておくと、実際にデータベースにアクセスしているデータの場所が、grepで検索した場合に、すぐにわかるということがあります。まぁ、これは、趣味の範囲内といえるので、プロジェクトの方針に従いましょう。
+  データベースのテーブル名とフィールド名の命名規則は<a href="/blog/20191113074356.html">データベースのテーブル名とフィールド名の命名規約</a>に基づいて記述しています。
 </p>
 <p>
   ユーザーIDが、int型でauto_incrementであるのは、ユーザーは、登録されるデータだからです。列を一意に識別できるIDを持たせています。CODEというのはkimotoのような、ユーザーIDと呼ばれているものです。IDは行を識別する情報として利用しているので、ユーザーIDはCODEに保存しています。
@@ -436,7 +436,7 @@ create table USER (
 # セッションを保存。期限は二週間後。
 my $two_week_seconds = (60 * 60 * 24 * 14);
 my $session_expiration = time + $two_week_seconds;
-my $sth = $dbi-&gt;prepare('update USER set SESSION_ID = ?, SESSION_EXPIRATION = ?');
+my $sth = $dbi-&gt;prepare('update user set session_id = ?, session_expiration = ?');
 $sth-&gt;execute($session_id, $session_expiration);
 </pre>
 <p>
@@ -463,7 +463,7 @@ my $cookie_session_id = $c-&gt;session('session_id');
 my $cur_time = time;
 
 # セッションが一致して、有効期限が切れていない、ユーザー情報を取得
-my $sth = $dbi-&gt;prepare('select ID, SESSION_EXPIRATION from USER where SESSION_ID = ?, SESSION_EXPIRATION &lt; ?');
+my $sth = $dbi-&gt;prepare('select id, session_expiration from user where session_id = ?, session_expiration &lt; ?');
 $sth-&gt;execute($cookie_session_id, $cur_time);
 my $user = $sth-&gt;fetchrow_hashref;
 $sth-&gt;finish;
@@ -507,7 +507,7 @@ my $one_day_seconds = 60 * 60 * 24;
 
 # 有効期限が1日以内に更新されていない場合に、更新する
 if ($new_user_session_expiration &gt; $user_session_expiration + $one_day_seconds) {
-  my $sth = $dbi-&gt;prepare('update USER set SESSION_EXPIRATION = ? from USER where ID = ?');
+  my $sth = $dbi-&gt;prepare('update user set session_expiration = ? from user where id = ?');
   $sth-&gt;execute($new_user_session_expiration, $user_id);
 }
 </pre>
@@ -557,21 +557,21 @@ if ($new_user_session_expiration &gt; $user_session_expiration + $one_day_second
   mysqlによるユーザーテーブルの作成例です。
 </p>
 <pre>
-create table USER (
-  ID int primary_key auto_increment,
-  CODE varchar(150) not null default '',
-  PASSWORD_HASH varchar(150) not null default '',
-  NAME varchar(150) not null default '',
-  MAIL varchar(150) not null default '',
-  SESSION_ID varchar(150),
-  SESSION_EXPIRATION bigint not null default 0,
-  TEMP_REGIST_ID varchar(150),
-  TEMP_REGIST_EXPIRATION bigint not null default 0,
-  AUTHENTICATED tiny int default 0,
-  unique(CODE),
-  unique(MAIL),
-  unique(SESSION_ID),
-  unique(TEMP_REGIST_ID)
+create table user (
+  id int primary_key auto_increment,
+  code varchar(150) not null default '',
+  password_hash varchar(150) not null default '',
+  name varchar(150) not null default '',
+  mail varchar(150) not null default '',
+  session_id varchar(150),
+  session_expiration bigint not null default 0,
+  temp_regist_id varchar(150),
+  temp_regist_expiration bigint not null default 0,
+  authenticated tiny int default 0,
+  unique(code),
+  unique(mail),
+  unique(session_id),
+  unique(temp_regist_id)
 );
 </pre>
 <h4>会員登録画面の作成</h4>
@@ -641,7 +641,7 @@ if ($user_id =~ /^[a-zA-Z0-9_]+$/) {
   else {
 
     # ユーザーIDが重複していないことをチェック
-    my $sth = $dbi-&gt;prepare('select CODE from USER where CODE = ?');
+    my $sth = $dbi-&gt;prepare('select code from user where code = ?');
     $sth-&gt;execute($user_id);
     my $user = $sth-&gt;fetchrow_hashref;
     $sth-&gt;finish;
@@ -650,7 +650,7 @@ if ($user_id =~ /^[a-zA-Z0-9_]+$/) {
     }
     else {
       # メールアドレスが重複していないことをチェック
-      my $sth = $dbi-&gt;prepare('select MAIL from USER where MAIL = ? and AUTHENTICATED = 1');
+      my $sth = $dbi-&gt;prepare('select mail from user where mail = ? and authenticated = 1');
       $sth-&gt;execute($mail);
       my $user = $sth-&gt;fetchrow_hashref;
       $sth-&gt;finish;
@@ -803,7 +803,7 @@ my $temp_regist_expiration = time + $one_day_seconds;
 </p>
 <pre>
 # ユーザー情報、仮登録ID、仮登録有効期限をユーザーテーブルに保存
-my $sth = $dbi-&gt;prepare('insert into USER (set CDOE = ?, PASSWORD_HASH = ?, MAIL = ?, TEMP_REGIST_ID = ?, TEMP_REGIST_EXPIRATION = ?');
+my $sth = $dbi-&gt;prepare('insert into user (set cdoe = ?, password_hash = ?, mail = ?, temp_regist_id = ?, temp_regist_expiration = ?');
 $sth-&gt;execute($user_id, $password_hash, $temp_regist_id, $temp_regist_expirasession_id, $temp_regist_expiration);
 </pre>
 <p>
