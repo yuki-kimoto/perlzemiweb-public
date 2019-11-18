@@ -186,6 +186,77 @@
     border-bottom:none;
   }
 
+  .perlzemi-forum {
+    width:70%;
+    margin-left:auto;
+    margin-right:auto;
+  }
+  .perlzemi-forum img {
+    float:left;
+    display:table-cell;
+    width:11%;
+    margin:0;
+    vertical-align:middle;
+  }
+  .perlzemi-forum-right {
+    float:left;
+    width:89%;
+    padding-left:15px;
+    display:table-cell;
+  }
+  .perlzemi-forum a, .perlzemi-forum a:visited {
+    overflow:hidden;
+    display:block;
+    width:100%;
+    color:white;
+    text-decoration:none;
+    font-size:19px;
+    font-weight:bold;
+    border-radius:5px;
+    margin:10px auto;
+    width:98%;
+    padding:28px 20px 25px 20px;
+    box-shadow: 0 2px 2px 0 rgba(0,0,0,0.14), 0 1px 5px 0 rgba(0,0,0,0.12), 0 3px 1px -2px rgba(0,0,0,0.2);/*影*/
+    text-shadow:1px 1px 1px #aa2074;
+    letter-spacing:1px;
+    line-height:1.6;
+    background:url(/images/perlzemi-forum-icon.png) no-repeat 26px 43px;
+    background-size:76px;
+    background-color:#f048a4;
+    padding-left:115px;
+  }
+
+  .bread {
+    border:none;
+    background:none;
+    padding:0;
+  }
+  .bread-home {
+    display:block;
+    width:24px;
+    height:24px;
+    background: #d00;
+    padding:2px;
+    border-radius:3px;
+  }
+  .bread img {
+    width:100%;
+  }
+  .bread li {
+    display:inline-block;
+    list-style-type:none;
+    font-size:14px;
+    margin:0;
+    padding:0;
+  }
+  .bread a {
+  }
+  .bread a:hover {
+  }
+  .bread a:visited {
+    color:white;
+  }
+
 /* Tablet and Smart phone */
 @media only screen and (max-width:960px) {
   .content {

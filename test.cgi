@@ -123,6 +123,12 @@
   <div class="bottom">
     <!-- bottom -->
 
+<div class="perlzemi-forum">
+  <a rel="nofollow" href="https://docs.google.com/forms/d/e/1FAIpQLSe6ypMTx5XTh2KbsIgqgPMXNrC5Bo9FKRPVHM_o0jvrH_k28A/viewform">
+    Perlゼミフォーラム - 環境構築・Perlプログラムの読み書きに困ったらここで質問(無料・5分で登録)
+  </a>
+</div>
+
   </div>
 </div>
 
