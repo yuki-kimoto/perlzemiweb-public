@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <!-- meta -->
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0">
+<link rel="stylesheet" type="text/css" href="/css/common.css">
+
+<link rel="shortcut icon" href="/images/mojo-startup-logo.png">
+
+<script type="text/javascript" src="/js/jquery-1.9.0.min.js"></script>
+<script type="text/javascript" src="/js/google-code-prettify/prettify.js"></script>
+<link  type="text/css" rel="stylesheet" href="/js/google-code-prettify/prettify.css"/>
+<script>
+  $(function(){
+    // google code prettifyの有効化
+    $("pre").addClass("prettyprint");
+    function init(event){
+      prettyPrint();
+    }
+    if(window.addEventListener)window.addEventListener("load",init,false);
+    else if(window.attachEvent)window.attachEvent("onload",init);
+    
+    $(".to-top").click(function() {
+      // ページの一番上までスクロールさせます。
+      $('body, html').animate({scrollTop: 0}, 300, 'linear');;
+    });
+  });
+</script>
+
+<title>macOSにおけるWeb開発環境の構築 - Mojoliciousスタートアップ - Perlによる新規Web開発</title>
+<meta name="description" content="まず最初にmacOSにおける開発環境構築を行います。macOSは、2019年における、Macと呼ばれるOSの正式名称です。過去にはMac OS Xと呼ばれていることもありました。">
+  </head>
+  <body>
+    <div class="container">
+      <div class="header">
+        <!-- header -->
+<h1>
+  <a href="/">Mojoliciousスタートアップ - Perlによる新規Web開発</a>
+</h1>
+
+      </div>
+      <div class="main">
+        <div class="content">
+          <div class="entry">
+  <div class="top">
+    <!-- top -->
+
+  </div>
+  <div class="middle">
+    <ol class="bread" itemscope itemtype="http://schema.org/BreadcrumbList">
+  <li itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">
+    <a itemprop="item" href="/" class="bread-home">
+      <span itemprop="name">
+        <img src="/images/bread/home.png" alt="Mojoliciousスタートアップ">
+      </span>
+    </a>
+    <meta itemprop="position" content="1" />
+  </li>
+  &#8250;
+  <li itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">
+    here
+  </li>
+</ol>
+<h2><a href="/blog/20191120072622.html">macOSにおけるWeb開発環境の構築</a></h2>
+<p>
+  まず最初にmacOSにおける開発環境構築を行います。macOSは、2019年における、Macと呼ばれるOSの正式名称です。過去にはMac OS Xと呼ばれていることもありました。
+</p>
+<p>
+  macOSのベースはUnixで、開発環境として利用できるターミナルと呼ばれるCUI環境が付属しています。
+</p>
+<p>
+  Unixというのは、サーバーの用途で広く利用されているOSのことです。
+</p>
+<p>
+  Mojoliciousスタートアップで開発するPerlのWebアプリケーションは、Unix/Linux環境で実行されることを前提としています。
+</p>
+<p>
+  この環境にPerlとMojoliciousをインストールすると、macOS上で、Web開発を試すことができます。
+</p>
+<p>
+  CUI環境というのは、コマンドラインユーザーインターフェイスの略で、コマンド(文字列)をキーボードで記述することで、プログラムを実行できる環境のことをいいます。
+</p>
+<h3>ターミナルの起動</h3>
+<p>
+  Mojoliciousスタートアップで開発するPerlのWebアプリケーションは、ターミナルと呼ばれるCUI環境を使って開発します。
+</p>
+<p>
+  macOSには、ターミナルと呼ばれるソフトウェアが標準で添付されています。
+</p>
+<p>
+  まず作業の最初として、ターミナルを起動します。
+</p>
+<p>
+  ターミナルを起動する方法は、以下の記事を参考になります。
+</p>
+<ul>
+  <li><a href="https://syncer.jp/mac-terminal">Macでターミナルを起動する方法</a></li>
+</ul>
+<p>
+  うまくターミナルが起動しましたか。
+</p>
+<h3>Command Line Toolsのインストール</h3>
+<p>
+  まず最初にCommand Line Toolsと呼ばれるものをインストールします。これは、macOSに、Perlをインストールする前提として、必要になるものです。Xcodeのインストールでもかまいませんが、こちらは容量が大きいです。Command Line Toolsは、容量が小さく、CUI環境で必要となるものだけをインストールできます。
+</p>
+<p>
+  Command Line Toolsのインストールは管理者権限で実行します。
+</p>
+<p>
+  Command Line Toolsをインストールするには、以下の記事を参考になります。
+</p>
+<ul>
+  <li><a href="https://se-note.tenouti.com/archives/581">Command Line Toolsのインストール</a></li>
+</ul>
+<p>
+  うまくCommand Line Toolsがインストールできましたか。
+</p>
+<h3>Perlのインストール</h3>
+<p>
+  次にPerlをインストールしましょう。
+</p>
+<p>
+  macOSへのPerlのインストール方法は、Perl入門ゼミの以下の記事で解説されていますので、チャレンジしてみましょう。perlbrewまたは、plenvというツールを使って、Perlをインストールします。選択はお好みで。
+</p>
+<ul>
+  <li><a href="https://tutorial.perlzemi.com/blog/20180814153419.html">macOSへのPerlのインストール</a></li>
+</ul>
+<p>
+  macOSには、Perlがデフォルトで利用可能ですが、Web開発で使うPerlは、上記手順でインストールしたものを使います。一番大きな理由は、CPANというサイトからモジュールをインストールするのに、デフォルトのPerlでは、うまくいかないからです。モジュールというのは、プログラムの部品という意味です。
+</p>
+<h3>Mojoliciousのインストール</h3>
+<p>
+  最後に、macOSへのPerlのインストールで、インストールしたcpanmというツールを使ってMojoliciousをインストールします。
+</p>
+<pre>
+cpanm Mojolicious
+</pre>
+<p>
+  インストールお疲れさまでした。
+</p>
+<p>
+  無事に、Command Line Tools、Perl、Mojoliciousのインストールが完了しましたか? 
+</p>
+<p>
+  外部リンクが切れている場合、インストールで困ったという場合は、Perlゼミフォーラムで質問できるので、ご利用ください。
+</p>
+
+  </div>
+  <div class="bottom">
+    <!-- bottom -->
+
+<div class="perlzemi-forum">
+  <a rel="nofollow" href="https://docs.google.com/forms/d/e/1FAIpQLSe6ypMTx5XTh2KbsIgqgPMXNrC5Bo9FKRPVHM_o0jvrH_k28A/viewform">
+    Perlゼミフォーラム - 環境構築・Perlプログラムの読み書きに困ったらここで質問(無料・5分で登録)
+  </a>
+</div>
+
+  </div>
+</div>
+
+        </div>
+        <div class="side">
+          <!-- side -->
+<div class="side-list">
+  <div class="side-list-title">
+    目次
+  </div>
+  <ul>
+    <li><a href="/list.html">記事の一覧</a></li>
+  </ul>
+</div>
+
+        </div>
+      </div>
+      <div class="footer">
+        <!-- footer -->
+<a href="http://www.perlzemi.com">Perlゼミ公式</a> & <a href="https://jp.giblog.net/">Giblog</a>
+
+      </div>
+    </div>
+  </body>
+</html>
