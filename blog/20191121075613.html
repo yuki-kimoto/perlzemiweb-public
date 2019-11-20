@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <!-- meta -->
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0">
+<link rel="stylesheet" type="text/css" href="/css/common.css">
+
+<link rel="shortcut icon" href="/images/mojo-startup-logo.png">
+
+<script type="text/javascript" src="/js/jquery-1.9.0.min.js"></script>
+<script type="text/javascript" src="/js/google-code-prettify/prettify.js"></script>
+<link  type="text/css" rel="stylesheet" href="/js/google-code-prettify/prettify.css"/>
+<script>
+  $(function(){
+    // google code prettifyの有効化
+    $("pre").addClass("prettyprint");
+    function init(event){
+      prettyPrint();
+    }
+    if(window.addEventListener)window.addEventListener("load",init,false);
+    else if(window.attachEvent)window.attachEvent("onload",init);
+    
+    $(".to-top").click(function() {
+      // ページの一番上までスクロールさせます。
+      $('body, html').animate({scrollTop: 0}, 300, 'linear');;
+    });
+  });
+</script>
+
+<title>ECサイトの立ち上げ - Mojoliciousスタートアップ - Perlによる新規Web開発</title>
+<meta name="description" content="ECサイトをさっそく作り始めてみましょう。商品検索のためのWebサイトを開発環境で立ち上げて、表示するところまでを、このページで解説します。">
+  </head>
+  <body>
+    <div class="container">
+      <div class="header">
+        <!-- header -->
+<h1>
+  <a href="/">Mojoliciousスタートアップ - Perlによる新規Web開発</a>
+</h1>
+
+      </div>
+      <div class="main">
+        <div class="content">
+          <div class="entry">
+  <div class="top">
+    <!-- top -->
+
+  </div>
+  <div class="middle">
+    <h2><a href="/blog/20191121075613.html">ECサイトの立ち上げ</a></h2>
+<p>
+  ECサイトをさっそく作り始めてみましょう。商品検索のためのWebサイトを開発環境で立ち上げて、表示するところまでを、このページで解説します。
+</p>
+<p>
+  <a href="/blog/20191115083343.html">WindowsでのWeb開発環境を構築</a>、あるいは<a href="/blog/20191120072622.html">macOSでWeb開発環境を構築</a>していることが前提です。
+</p>
+<p>
+  Windowsの場合は、msys2を立ち上げてください。macOSの場合は、ターミナルを立ち上げてください。
+</p>
+<h3>Webアプリケーションのひな型作成</h3>
+<p>
+  まず最初にECサイトを作り始めるときの最初の作業は、Webアプリケーションのひな型を作成することです。Mojoliciousには、ひな型を作成するためのコマンドが用意されています。
+</p>
+<p>
+  Webアプリケーションの名前は、次の規則にそって作りましょう。先頭が大文字のアルファベット、二文字目以降は小文字です。Mojoliciousスタートアップでは「わたしのお店」を意味する「Myshop」という名前にしたいと思います。
+</p>
+<p>
+  Webアプリケーションのひな型を作成するには、以下のコマンドを使用します。名前の部分は、自分で決めることができます。
+</p>
+<p>
+  コマンドラインから以下のコマンドを実行して、Enterキーを押してみてください。
+</p>
+<pre>
+# Webアプリケーションのひな型を「Myshop」という名前で作成
+mojo generate app Myshop
+</pre>
+<p>
+  以下のように生成されたディレクトリとファイルが出力されます。
+</p>
+<pre>
+  [mkdir] /home/kimoto/labo/tmp/myshop/script
+  [write] /home/kimoto/labo/tmp/myshop/script/myshop
+  [chmod] /home/kimoto/labo/tmp/myshop/script/myshop 744
+  [mkdir] /home/kimoto/labo/tmp/myshop/lib
+  [write] /home/kimoto/labo/tmp/myshop/lib/Myshop.pm
+  [exist] /home/kimoto/labo/tmp/myshop
+  [write] /home/kimoto/labo/tmp/myshop/myshop.conf
+  [mkdir] /home/kimoto/labo/tmp/myshop/lib/Myshop/Controller
+  [write] /home/kimoto/labo/tmp/myshop/lib/Myshop/Controller/Example.pm
+  [mkdir] /home/kimoto/labo/tmp/myshop/t
+  [write] /home/kimoto/labo/tmp/myshop/t/basic.t
+  [mkdir] /home/kimoto/labo/tmp/myshop/public
+  [write] /home/kimoto/labo/tmp/myshop/public/index.html
+  [mkdir] /home/kimoto/labo/tmp/myshop/templates/layouts
+  [write] /home/kimoto/labo/tmp/myshop/templates/layouts/default.html.ep
+  [mkdir] /home/kimoto/labo/tmp/myshop/templates/example
+  [write] /home/kimoto/labo/tmp/myshop/templates/example/welcome.html.ep
+</pre>
+<p>
+  Webアプリケーション名は、先頭が大文字でしたがディレクトリ名は「myshop」のように小文字になっていることに注意してください。
+</p>
+<h3>Webアプリケーションの立ち上げ</h3>
+<p>
+  Webアプリケーションをさっそく立ち上げてみましょう。
+</p>
+<p>
+  まず最初に、Webアプリケーションのディレクトリ「myshop」に移動します。
+</p>
+<pre>
+cd myshop
+</pre>
+<p>
+  ここでlsコマンドをを使って、ファイルを表示してみましょう。-lオプションを使用すると、詳細表示になります。
+</p>
+<pre>
+ls -l
+</pre>
+<p>
+  次のように表示されます。
+</p>
+<pre>
+drwxrwxr-x 3 kimoto kimoto 4096 Nov 21 08:21 lib
+-rw-rw-r-- 1 kimoto kimoto   62 Nov 21 08:21 myshop.conf
+drwxrwxr-x 2 kimoto kimoto 4096 Nov 21 08:21 public
+drwxrwxr-x 2 kimoto kimoto 4096 Nov 21 08:21 script
+drwxrwxr-x 2 kimoto kimoto 4096 Nov 21 08:21 t
+drwxrwxr-x 4 kimoto kimoto 4096 Nov 21 08:21 templates
+</pre>
+<p>
+  それぞれのディレクトリとファイルについて簡単に解説しておきます。
+</p>
+<h4>lib - モジュールのディレクトリ</h4>
+<p>
+  libの中には、Webアプリケーションを構成するPerlのモジュールを格納するのに利用します。モジュールとは、プログラムを構成する部品のことです。
+</p>
+<h4>myshop.conf - 設定ファイル</h4>
+<p>
+  myshop.confは、Webアプリケーションの設定ファイルです。
+</p>
+<h4>public - 公開ファイル</h4>
+<p>
+  publicには、画像やCSSやJavaScriptなど、静的なファイルを格納するのに利用します。
+</p>
+<h4>script</h4>
+<p>
+  Webアプリケーションを起動するためのPerlのスクリプトが格納されています。
+</p>
+<h4>t</h4>
+<p>
+  「t」はWebアプリケーションの試験を格納するためのディレクトリです。
+</p>
+<h4>templates</h4>
+<p>
+  「templates」は、Webアプリケーションのテンプレートファイルを格納するのに利用します。ブラウザから見える画面を変更するには、この中のファイルを修正します。
+</p>
+<h4>Webアプリケーションの起動</h4>
+<p>
+  Webアプリケーションを起動してみましょう。Webアプリケーションを起動するにはMojoliciousの「morbo」コマンドを使用します。morboの引数には、scriptディレクトリの中に格納されている、Webアプリケーションの起動スクリプトを指定します。
+</p>
+<pre>
+morbo script/myshop
+</pre>
+<p>
+  次のように表示され、Webアプリケーションが起動します。
+</p>
+<pre>
+Server available at http://127.0.0.1:3000
+</pre>
+<p>
+  IEやChromeやFirefoxやSafariを立ち上げて、URLの欄に、上で表示されたURLを入力してEnterを押してみましょう。左クリックで、ドラッグすることで、コマンドライン上の文字をコピーできます。
+</p>
+<p>
+  画面に以下の文字が表示されるとWebアプリケーションの立ち上げが成功しています。
+</p>
+<pre>
+Welcome to the Mojolicious real-time web framework!
+</pre>
+<p>
+  おめでとうございます。これであなたも、Web開発のスタートラインに立ちました!
+</p>
+<p>
+  ここから、商品の画像を追加したりして、ECサイトを成長させていきます。
+</p>
+
+  </div>
+  <div class="bottom">
+    <!-- bottom -->
+
+<div class="perlzemi-forum">
+  <a rel="nofollow" href="https://docs.google.com/forms/d/e/1FAIpQLSe6ypMTx5XTh2KbsIgqgPMXNrC5Bo9FKRPVHM_o0jvrH_k28A/viewform">
+    Perlゼミフォーラム - 環境構築・Perlプログラムの読み書きに困ったらここで質問(無料・5分で登録)
+  </a>
+</div>
+
+  </div>
+</div>
+
+        </div>
+        <div class="side">
+          <!-- side -->
+<div class="side-list">
+  <div class="side-list-title">
+    目次
+  </div>
+  <ul>
+    <li><a href="/list.html">記事の一覧</a></li>
+  </ul>
+</div>
+
+        </div>
+      </div>
+      <div class="footer">
+        <!-- footer -->
+<a href="http://www.perlzemi.com">Perlゼミ公式</a> & <a href="https://jp.giblog.net/">Giblog</a>
+
+      </div>
+    </div>
+  </body>
+</html>
