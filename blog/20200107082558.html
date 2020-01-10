@@ -83,17 +83,85 @@
 <p>
   会員登録フォームを作成してみましょう。
 </p>
+<p>
+  次のような会員フォームを作成できます。
+</p>
+<p>
+  <a href="http://www.perlzemi.com/signup">会員登録フォームのサンプル</a>
+</p>
 <pre>
 &lt;div class="signup"&gt;
   &lt;div class="signup-block"&gt;
-    &lt;div class="signup-title"&gt;会員登録&lt;/div&gt;
-    &lt;%= text_field 'mail', placeholder =&gt; 'メールアドレス' %&gt;
-    &lt;%= text_field 'code', placeholder =&gt; 'ユーザーID' %&gt;
-    &lt;%= password_field 'password', placeholder =&gt; 'パスワード' %&gt;
-    &lt;%= submit_button '確認画面へ' %&gt;
+    &lt;form action="&lt;%= url_for %&gt;" method="POST"&gt;
+      &lt;div class="signup-title"&gt;会員登録&lt;/div&gt;
+      &lt;%= text_field 'mail', placeholder =&gt; 'メールアドレス' %&gt;
+      &lt;%= text_field 'code', placeholder =&gt; 'ユーザーID' %&gt;
+      &lt;%= password_field 'password', placeholder =&gt; 'パスワード' %&gt;
+      &lt;%= submit_button '確認画面へ(準備中)' %&gt;
+    &lt;/form&gt;
   &lt;/div&gt;
 &lt;/div&gt;
 </pre>
+<p>
+  登録フォームのスタイルシートは「public/css/default.css」に記述してください。スマートフォン対応のCSS設定がされていることが前提になります。
+</p>
+<pre>
+  /* 会員登録 */
+  .signup {
+    
+  }
+  .signup-title {
+    font-weight:bold;
+    text-align:center;
+    font-size:18px;
+  }
+  .signup-block {
+    width:calc(100% - 15px);
+    max-width:500px;
+    margin-top:20px;
+    margin-left:auto;
+    margin-right:auto;
+    padding:10px;
+    border:1px solid #ddd;
+    border-radius:5px;
+  }
+  .signup-title {
+    
+  }
+  .signup input[type=text], .signup input[type=password] {
+    display:block;
+    width:calc(100% - 15px);
+    margin-left:auto;
+    margin-right:auto;
+    margin-top:12px;
+    margin-bottom:12px;
+    padding:8px 10px;
+    border-radius:3px;
+    border:1px solid #ddd;
+    font-size:16px;
+  }
+  .signup input[type=submit] {
+    display:block;
+    width:calc(50%);
+    max-width:500px;
+    margin-left:auto;
+    margin-right:auto;
+    background:#D82E5D;
+    border:1px solid #D82E5D;
+    color:white;
+    padding:10px 0;
+    border-radius:5px;
+    cursor:pointer;
+  }
+</pre>
+<h4>タグヘルパー</h4>
+<p>
+  「text_field」「password_field」というのは、Mojoliciousのタグヘルパーです。text_fieldは、自動的にフォームに値を復元してくれるので便利です。たとえば、フォームの内容に間違いがあった場合に、同じ画面を表示することになりますが、このときに、値を自動的に復元してくれるのです。
+</p>
+<h4>actionのurl_forメソッド</h4>
+<p>
+  url_forメソッドに引数を与えなかった場合は、現在のURLを返してくれます。現在のURLのPOSTの処理で、この後の処理を行います。
+</p>
 
   </div>
   <div class="bottom">

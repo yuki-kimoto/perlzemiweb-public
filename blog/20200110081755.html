@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <!-- meta -->
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0">
+<link rel="stylesheet" type="text/css" href="/css/common.css">
+
+<link rel="shortcut icon" href="/images/mojo-startup-logo.png">
+
+<script type="text/javascript" src="/js/jquery-1.9.0.min.js"></script>
+<script type="text/javascript" src="/js/google-code-prettify/prettify.js"></script>
+<link  type="text/css" rel="stylesheet" href="/js/google-code-prettify/prettify.css"/>
+<script>
+  $(function(){
+    // google code prettifyの有効化
+    $("pre").addClass("prettyprint");
+    function init(event){
+      prettyPrint();
+    }
+    if(window.addEventListener)window.addEventListener("load",init,false);
+    else if(window.attachEvent)window.attachEvent("onload",init);
+    
+    $(".to-top").click(function() {
+      // ページの一番上までスクロールさせます。
+      $('body, html').animate({scrollTop: 0}, 300, 'linear');;
+    });
+  });
+</script>
+
+<title>仮登録ユーザーテーブルの作成 - Mojoliciousスタートアップ - Perlによる新規Web開発</title>
+<meta name="description" content="仮登録ユーザーテーブルを作成しましょう。会員登録フォームの作成が終わったら、次は、データベースに仮登録用のユーザーテーブルを作成します。">
+  </head>
+  <body>
+    <div class="container">
+      <div class="header">
+        <!-- header -->
+<h1>
+  <a href="/">Mojoliciousスタートアップ - Perlによる新規Web開発</a>
+</h1>
+
+      </div>
+      <div class="main">
+        <div class="content">
+          <div class="entry">
+  <div class="top">
+    <!-- top -->
+
+  </div>
+  <div class="middle">
+    <h2><a href="/blog/20200110081755.html">仮登録ユーザーテーブルの作成</a></h2>
+<p>
+  仮登録ユーザーテーブルを作成しましょう。会員登録フォームの作成が終わったら、次は、データベースに仮登録用のユーザーテーブルを作成します。
+</p>
+<h3>仮登録ユーザーテーブルとは</h3>
+<p>
+  仮登録ユーザーテーブルとは、ユーザー認証が済んでいないユーザーを、登録しておくために使用するテーブルのことです。次のフィールドが必要です。
+</p>
+<p>
+  テーブル名は「user_tmp_regist」にしました。
+</p>
+<table>
+  <tr>
+    <th>フィールド</th><th>テーブルのフィールド名</th><th>型</th><th>制約</th>
+  </tr>
+  <tr>
+    <td>行ID</td><td>id</td><td>32bit整数</td><td>プライマリーキー、自動インクリメント</td>
+  </tr>
+  <tr>
+    <td>ユーザーID</td><td>code</td><td>文字列</td><td>非ヌル、ユニーク </td>
+  </tr>
+  <tr>
+    <td>ハッシュ化されたパスワード</td><td>password_crypted</td><td>文字列</td><td>非ヌル</td>
+  </tr>
+  <tr>
+    <td>メールアドレス</td><td>mail</td><td>文字列</td><td>非ヌル</td>
+  </tr>
+  <tr>
+    <td>トークン</td><td>token<td>文字列</td><td>非ヌル、ユニーク</td>
+  </tr>
+  <tr>
+    <td>トークン有効期限</td><td>token_expiration</td><td>64bit整数</td><td>非ヌル</td>
+  </tr>
+</table>
+<p>
+  氏名、住所、電話番号、希望条件など、会員登録フォームに、他の入力項目がある場合などは、そのフィールドも必要になります。
+</p>
+<h4>mysqlで仮登録ユーザーテーブルを作成</h4>
+<p>
+  mysqlで仮登録ユーザーテーブルを作成してみましょう。
+</p>
+<pre>
+create table user_tmp_regist (
+  id int primary key auto_increment,
+  code varchar(150) not null default '',
+  password_crypted varchar(150) not null default '',
+  mail varchar(150) not null default '',
+  token varchar(150) not null default '',
+  token_expiration bigint not null default 0,
+  unique(code),
+  unique(token)
+) ENGINE=InnoDB CHARSET=utf8mb4;
+</pre>
+<p>
+  utf8mb4がサポートされていない場合は、utf8に書き換えてください。
+</p>
+<p>
+  (執筆中)
+</p>
+
+  </div>
+  <div class="bottom">
+    <!-- bottom -->
+
+<div class="perlzemi-forum">
+  <a rel="nofollow" href="https://docs.google.com/forms/d/e/1FAIpQLSe6ypMTx5XTh2KbsIgqgPMXNrC5Bo9FKRPVHM_o0jvrH_k28A/viewform">
+    Perlゼミフォーラム - 環境構築・Perlプログラムの読み書きに困ったらここで質問(無料・5分で登録)
+  </a>
+</div>
+
+  </div>
+</div>
+
+        </div>
+        <div class="side">
+          <!-- side -->
+<div class="side-list">
+  <div class="side-list-title">
+    目次
+  </div>
+  <ul>
+    <li><a href="/list.html">記事の一覧</a></li>
+  </ul>
+</div>
+
+        </div>
+      </div>
+      <div class="footer">
+        <!-- footer -->
+<a rel="nofollow" href="http://www.perlzemi.com">Perlゼミのプログラミングスクールはこちら</a> & <a rel="nofollow" href="https://jp.giblog.net/">このサイトはGiblogで製作されています</a>
+
+      </div>
+    </div>
+  </body>
+</html>

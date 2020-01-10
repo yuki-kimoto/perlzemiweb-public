@@ -154,7 +154,8 @@
 </p>
 <ul>
   <li><a href="/blog/20200107082558.html">会員登録フォーム</a></li>
-  <li>仮登録ユーザーテーブル</li>
+  <li><a href="/blog/20200110081755.html">仮登録ユーザーテーブル</a></li>
+  <li>会員登録フォームのバリデーション</li>
   <li>仮登録</li>
   <li>ユーザーテーブルの作成</li>
   <li>本登録</li>
@@ -167,7 +168,25 @@
   <li>ユーザー画像のアップロード</li>
   <li><a href="/blog/20191029080630.html">ログイン機能を使ったユーザー認証の作り方</a></li>
 </ul>
-<h3>Webサービスの公開</h3>
+<!-- <h3>Webサービスの公開</h3> -->
+<h3>よくある質問</h3>
+<h4>ページごとにルーティングを設定するのがめんどうなのですが、自動的に設定する方法はありますか?</h4>
+<p>
+  Mojolicious::Plugin::AutoRouteというモジュールを使うと、テンプレートを配置するだけで、自動的にルーティングを作成してくれます。
+</p>
+<pre>
+# Mojolicious
+$self-&gt;plugin('AutoRoute');
+
+# Mojolicious::Lite
+plugin 'AutoRoute';
+
+# Option
+plugin 'AutoRoute', route =&gt; $r;
+</pre>
+<p>
+  <a href="https://tutorial.perlzemi.com/blog/20130731137527.html">ファイルを配置でルーティングを自動生成 - Mojolicious::Plugin::AutoRoute</a>
+</p>
 
   </div>
   <div class="bottom">
