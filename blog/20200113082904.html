@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <!-- meta -->
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0">
+<link rel="stylesheet" type="text/css" href="/css/common.css">
+
+<link rel="shortcut icon" href="/images/mojo-startup-logo.png">
+
+<script type="text/javascript" src="/js/jquery-1.9.0.min.js"></script>
+<script type="text/javascript" src="/js/google-code-prettify/prettify.js"></script>
+<link  type="text/css" rel="stylesheet" href="/js/google-code-prettify/prettify.css"/>
+<script>
+  $(function(){
+    // google code prettifyの有効化
+    $("pre").addClass("prettyprint");
+    function init(event){
+      prettyPrint();
+    }
+    if(window.addEventListener)window.addEventListener("load",init,false);
+    else if(window.attachEvent)window.attachEvent("onload",init);
+    
+    $(".to-top").click(function() {
+      // ページの一番上までスクロールさせます。
+      $('body, html').animate({scrollTop: 0}, 300, 'linear');;
+    });
+  });
+</script>
+
+<title>ユーザーテーブルの作成 - Mojoliciousスタートアップ - Perlによる新規Web開発</title>
+<meta name="description" content="ユーザーテーブルを作成しましょう。ユーザーテーブルとは、ユーザー情報を保存しておくデータベースのテーブルのことです。仮登録ユーザーテーブルの作成が終わったら、次は、ユーザーテーブルを作成しましょう。">
+  </head>
+  <body>
+    <div class="container">
+      <div class="header">
+        <!-- header -->
+<h1>
+  <a href="/">Mojoliciousスタートアップ - Perlによる新規Web開発</a>
+</h1>
+
+      </div>
+      <div class="main">
+        <div class="content">
+          <div class="entry">
+  <div class="top">
+    <!-- top -->
+
+  </div>
+  <div class="middle">
+    <h2><a href="/blog/20200113082904.html">ユーザーテーブルの作成</a></h2>
+<p>
+  ユーザーテーブルを作成しましょう。ユーザーテーブルとは、ユーザー情報を保存しておくデータベースのテーブルのことです。仮登録ユーザーテーブルの作成が終わったら、次は、ユーザーテーブルを作成しましょう。
+</p>
+<h3>ユーザーテーブルとは</h3>
+<p>
+  ユーザーテーブルとは、ユーザー情報を保存しておくデータベースのテーブルのことです。次のフィールドが必要です。
+</p>
+<p>
+  テーブル名は「user」にしました。
+</p>
+<table>
+  <tr>
+    <th>フィールド</th><th>テーブルのフィールド名</th><th>型</th><th>制約</th>
+  </tr>
+  <tr>
+    <td>行ID</td><td>id</td><td>32bit整数</td><td>プライマリーキー、自動インクリメント</td>
+  </tr>
+  <tr>
+    <td>ユーザーID</td><td>code</td><td>文字列</td><td>非ヌル、ユニーク </td>
+  </tr>
+  <tr>
+    <td>ハッシュ化されたパスワード</td><td>password_crypted</td><td>文字列</td><td>非ヌル</td>
+  </tr>
+  <tr>
+    <td>メールアドレス</td><td>mail</td><td>文字列</td><td>非ヌル</td>
+  </tr>
+</table>
+<p>
+  氏名、住所、電話番号、希望条件など、会員登録フォームに、他の入力項目がある場合などは、そのフィールドも必要になります。
+</p>
+<h4>mysqlでユーザーテーブルを作成</h4>
+<p>
+  mysqlでユーザーテーブルを作成してみましょう。
+</p>
+<pre>
+create table user (
+  id int primary key auto_increment,
+  code varchar(150) not null default '',
+  password_crypted varchar(150) not null default '',
+  mail varchar(150) not null default '',
+  unique(code),
+) ENGINE=InnoDB CHARSET=utf8mb4;
+</pre>
+<p>
+  utf8mb4がサポートされていない場合は、utf8に書き換えてください。
+</p>
+<h3>フィールドの解説</h3>
+<p>
+  フィールドは、トークンを除いて、仮登録ユーザーテーブルと同じですので、<a href="/blog/20200110081755.html">仮登録ユーザーテーブルの作成</a>の記事を参考にしてください。
+</p>
+
+  </div>
+  <div class="bottom">
+    <!-- bottom -->
+
+<div class="perlzemi-forum">
+  <a rel="nofollow" href="https://docs.google.com/forms/d/e/1FAIpQLSe6ypMTx5XTh2KbsIgqgPMXNrC5Bo9FKRPVHM_o0jvrH_k28A/viewform">
+    Perlゼミフォーラム - 環境構築・Perlプログラムの読み書きに困ったらここで質問(無料・5分で登録)
+  </a>
+</div>
+
+  </div>
+</div>
+
+        </div>
+        <div class="side">
+          <!-- side -->
+<div class="side-list">
+  <div class="side-list-title">
+    目次
+  </div>
+  <ul>
+    <li><a href="/list.html">記事の一覧</a></li>
+  </ul>
+</div>
+
+        </div>
+      </div>
+      <div class="footer">
+        <!-- footer -->
+<a rel="nofollow" href="http://www.perlzemi.com">Perlゼミのプログラミングスクールはこちら</a> & <a rel="nofollow" href="https://jp.giblog.net/">このサイトはGiblogで製作されています</a>
+
+      </div>
+    </div>
+  </body>
+</html>
