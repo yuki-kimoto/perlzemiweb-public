@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <!-- meta -->
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0">
+<link rel="stylesheet" type="text/css" href="/css/common.css">
+
+<link rel="shortcut icon" href="/images/mojo-startup-logo.png">
+
+<script type="text/javascript" src="/js/jquery-1.9.0.min.js"></script>
+<script type="text/javascript" src="/js/google-code-prettify/prettify.js"></script>
+<link  type="text/css" rel="stylesheet" href="/js/google-code-prettify/prettify.css"/>
+<script>
+  $(function(){
+    // google code prettifyの有効化
+    $("pre").addClass("prettyprint");
+    function init(event){
+      prettyPrint();
+    }
+    if(window.addEventListener)window.addEventListener("load",init,false);
+    else if(window.attachEvent)window.attachEvent("onload",init);
+    
+    $(".to-top").click(function() {
+      // ページの一番上までスクロールさせます。
+      $('body, html').animate({scrollTop: 0}, 300, 'linear');;
+    });
+  });
+</script>
+
+<title>会員登録フォームのバリデーション - Mojoliciousスタートアップ - Perlによる新規Web開発</title>
+<meta name="description" content="会員登録フォームのバリデーションの処理を書いていきましょう。バリデーションとは、ユーザーから入力されたデータが正しいものであるかを検証する作業のことをいいます。">
+  </head>
+  <body>
+    <div class="container">
+      <div class="header">
+        <!-- header -->
+<h1>
+  <a href="/">Mojoliciousスタートアップ - Perlによる新規Web開発</a>
+</h1>
+
+      </div>
+      <div class="main">
+        <div class="content">
+          <div class="entry">
+  <div class="top">
+    <!-- top -->
+
+  </div>
+  <div class="middle">
+    <h2><a href="/blog/20200114081305.html">会員登録フォームのバリデーション</a></h2>
+<p>
+  会員登録フォームのバリデーションの処理を書いていきましょう。バリデーションとは、ユーザーから入力されたデータが正しいものであるかを検証する作業のことをいいます。
+</p>
+<h3>送信されたユーザー情報を取得する</h3>
+<p>
+  送信されたユーザー情報は、パラメーターから取得します。ユーザー情報が入ったパラメーターを取得するには<a href="https://tutorial.perlzemi.com/blog/20110501130707.html">paramメソッド</a>を使用します。
+</p>
+<p>
+  <a href="/blog/20200107082558.html">会員登録フォーム</a>からPOSTされた情報を受け取ってみましょう。この処理では、POSTであって、仮登録の処理であるかを、事前に確認しています。
+</p>
+<pre>
+&lt;%
+  # POSTリクエストの処理
+  if ($self-&gt;method eq 'POST') {
+    # 処理方法
+    my $op = param('op');
+    $op = '' unless defined $op;
+    
+    # 仮登録の処理
+    if ($op eq 'register') {
+      # ユーザー情報の取得
+      # ユーザーID
+      my $code = param('code');
+      
+      # パスワード
+      my $password = param('password');
+      
+      # メールアドレス
+      my $mail = param('mail');
+    }
+  }
+%&gt;
+</pre>
+<h3>ユーザーIDのバリデーション</h3>
+<p>
+  ユーザーIDが正しいものであることを確認しましょう。ユーザーIDが正しいというのは、Mojoliciousスタートアップでは次のように定義します。
+</p>
+<ul>
+  <li>ユーザーIDが、ASCIIコードの英数字とアンダーバーの1文字以上で構成されていること</li>
+  <li>ユーザーIDの長さが、仮登録ユーザーテーブルと、ユーザーテーブルのユーザーIDの長さに収まること</li>
+  <li>ユーザーIDが、ユーザーテーブルに存在するユーザーIDと重複しないこと</li>
+</ul>
+<p>
+  ユーザーIDは、一意でなければならないので、これをチェックするために、データベースにアクセスする必要があることに注意しましょう。
+</p>
+<p>
+  ユーザーIDのバリデーションを書いていきましょう。正しくない場合は、エラー情報に追加するようにしています。
+</p>
+<p>
+  O/Rマッパーは、<a href="https://tutorial.perlzemi.com/blog/20110401130559.html">DBIx::Custom</a>です。
+</p>
+<h4>ユーザーIDが、ASCIIコードの英数字とアンダーバーの1文字以上で構成されていること</h4>
+<p>
+  ユーザーIDが、ASCIIコードの英数字とアンダーバーの1文字(a-zA-Z0-9_)以上で構成されていることをチェックするには、Perlの正規表現を使いましょう。
+</p>
+<p>
+  <a href="https://tutorial.perlzemi.com/blog/20100827127859.html">正規表現</a>は以下の二つのどちらかで表現できます。素直に文字クラスで書くか、PerlのASCIIコードで構成されたワード文字を表現する文字クラスを使います。
+</p>
+<pre>
+# 文字クラスで素直に書く
+^[a-zA-Z0-9_]+$
+
+# PerlのASCIIコードで構成されたワード文字を表現する文字クラスを使う
+^\p{PosixWord}+$
+</pre>
+<p>
+  (執筆中)
+</p>
+
+  </div>
+  <div class="bottom">
+    <!-- bottom -->
+
+<div class="perlzemi-forum">
+  <a rel="nofollow" href="https://docs.google.com/forms/d/e/1FAIpQLSe6ypMTx5XTh2KbsIgqgPMXNrC5Bo9FKRPVHM_o0jvrH_k28A/viewform">
+    Perlゼミフォーラム - 環境構築・Perlプログラムの読み書きに困ったらここで質問(無料・5分で登録)
+  </a>
+</div>
+
+  </div>
+</div>
+
+        </div>
+        <div class="side">
+          <!-- side -->
+<div class="side-list">
+  <div class="side-list-title">
+    目次
+  </div>
+  <ul>
+    <li><a href="/list.html">記事の一覧</a></li>
+  </ul>
+</div>
+
+        </div>
+      </div>
+      <div class="footer">
+        <!-- footer -->
+<a rel="nofollow" href="http://www.perlzemi.com">Perlゼミのプログラミングスクールはこちら</a> & <a rel="nofollow" href="https://jp.giblog.net/">このサイトはGiblogで製作されています</a>
+
+      </div>
+    </div>
+  </body>
+</html>

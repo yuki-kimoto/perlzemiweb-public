@@ -55,6 +55,9 @@
 <p>
   Mojoliciousスタートアップでは、ユーザーIDを自分で作成できる会員登録機能の実装方法を解説します。
 </p>
+<p>
+  アカウント登録と呼ばれている機能も、会員登録の機能と同じです。
+</p>
 <h3>会員登録のユーザー情報</h3>
 <p>
   会員登録に最低限必要なものは以下です。
@@ -97,7 +100,8 @@
       &lt;%= text_field 'mail', placeholder =&gt; 'メールアドレス' %&gt;
       &lt;%= text_field 'code', placeholder =&gt; 'ユーザーID' %&gt;
       &lt;%= password_field 'password', placeholder =&gt; 'パスワード' %&gt;
-      &lt;%= submit_button '確認画面へ(準備中)' %&gt;
+      &lt;%= submit_button '会員登録する' %&gt;
+      &lt;%= hidden_field 'op' =&gt; 'register' %&gt;
     &lt;/form&gt;
   &lt;/div&gt;
 &lt;/div&gt;
@@ -162,6 +166,13 @@
 <p>
   url_forメソッドに引数を与えなかった場合は、現在のURLを返してくれます。現在のURLのPOSTの処理で、この後の処理を行います。
 </p>
+<h4>仮登録の処理</h4>
+<p>
+  仮登録の処理であることが明示的にわかるように、隠しフィールドとして「op」という名前で「register」という値を設定しています。
+</p>
+<pre>
+      &lt;%= hidden_field 'op' =&gt; 'register' %&gt;
+</pre>
 
   </div>
   <div class="bottom">

@@ -89,7 +89,8 @@ create table user (
   code varchar(150) not null default '',
   password_crypted varchar(150) not null default '',
   mail varchar(150) not null default '',
-  unique(code),
+  unique(mail),
+  unique(code)
 ) ENGINE=InnoDB CHARSET=utf8mb4;
 </pre>
 <p>
