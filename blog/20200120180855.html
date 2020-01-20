@@ -90,26 +90,43 @@ id =&gt; 1000, name =&gt; 'Book1000', price =&gt; 450
 </p>
 <h4>全体の件数</h4>
 <p>
-  まず最初に必要な情報は、全体の件数です。これは、一般的にデータベース関数のcount関数で取得できる情報です。
+  まず最初に必要な情報は、全体の件数です。DBIx::Customのselectメソッドと、mysqlのcount関数を使って、件数を取得してみましょう。
 </p>
 <pre>
 # 全体の件数
-my $total_entries = $dbi-&gt;model('book')-&gt;select('count(*)')-&gt;value;
+my $total = $dbi-&gt;model('book')-&gt;select('count(*)')-&gt;value;
 </pre>
-<h4>一ページに表示する行数</h4>
+<h4>一ページに表示する個数</h4>
 <p>
-  次に必要なのは、一ページに表示する行数です。これは、30～50くらいの値を設定します。
+  次に必要なのは、一ページに表示する個数です。これは、30～50くらいの値を設定します。
 </p>
 <pre>
-my $entries_per_page = 30;
+my $count_per_page = 30;
 </pre>
 <h4>現在のページ</h4>
 <p>
   最後は、現在のページです。これは、パラメーターから受け取り、長さがない場合、または、1より小さい場合は、1を指定しましょう。
 </p>
 <pre>
-my $current_page = param('page');
-$current_page = 1 if !length $page || $page &lt; 1;
+my $page = param('page');
+$page = 1 if !length $page || $page &lt; 1;
+</pre>
+<h4>オフセットの計算</h4>
+<p>
+  ひとつのページに表示するデータを取り出すには、、mysqlのlimit句を使って、どの位置からデータを取得するかを指定する必要があります。
+</p>
+<p>
+  このために、オフセットを計算します。
+</p>
+<pre>
+my $offset = $count_per_page * ($page - 1);
+</pre>
+<h4>データの取得</h4>
+<p>
+  mysqlのbookテーブルから、指定したページに表示するデータを取得します。DBIx::Customのselectメソッドと、mysqlのlimit句を使って、件数を取得してみましょう。appendはorder by句や、limit句など自由に追加するためのオプションです。
+</p>
+<pre>
+my $books = $dbi-&gt;model('book')-&gt;select(['id', 'name'], append =&gt; "limit $offset, $count_per_page")-&gt;all;
 </pre>
 <h4>Data::Pageオブジェクトの生成</h4>
 <p>
@@ -117,7 +134,7 @@ $current_page = 1 if !length $page || $page &lt; 1;
 </p>
 <pre>
 # Data::Pageオブジェクトの生成
-my $pager = Data::Page-&gt;new($total_entries, $entries_per_page, $current_page);
+my $pager = Data::Page-&gt;new($total, $count_per_page, $page);
 </pre>
 <h4>前のページを取得</h4>
 <p>
@@ -147,22 +164,121 @@ my $first_page = $page-&gt;first_page;
 <pre>
 my $last_page = $page-&gt;last_page;
 </pre>
-<h4>ページネーションのサンプルコード</h4>
+<h3>ページナビゲーション機能</h3>
 <p>
-  ページネーションのサンプルコードです。url_withとqueryへハッシュリファレンスを渡す方法を使用すると、現在のURLのクエリを維持しながら、ページ番号だけ置換することができます。
+  1, 2, 3, 4などのページナビゲーション機能を追加してみましょう。たとえば15ページ目にいるときは、15ページ目の周辺のページを合わせて、ページ番号を十個取得できます。
 </p>
 <pre>
+# ページナビゲーションの個数を設定
+$pager-&gt;pages_per_navigation(10);
+
+# 10 11 12 13 14 15 16 17 18 19
+my @nav_pages = $pager-&gt;pages_in_navigation;
+&lt;pre&gt;
+
+&lt;h4&gt;ページネーションのサンプルコード&lt;/h4&gt;
+
+ページネーションのサンプルコードです。最初のページ、前のページ、次のページ、最後のページのサンプルです。
+
+&lt;pre&gt;
+# アプリケーションクラスで読み込んでおく
+use Data::Page;
+use Data::Page::Navigation;
+</pre>
+<pre>
+&lt;%
+  # 現在のページ
+  my $page = param('page');
+  $page = 1 if !length $page || $page &lt; 1;
+  
+  # DBI
+  my $dbi = $self-&gt;app-&gt;dbi;
+  
+  # 1ページに表示する個数
+  my $count_per_page = 30;
+  
+  # オフセット
+  my $offset = $count_per_page * ($page - 1);
+  
+  # 本の一覧
+  my $books = $dbi-&gt;model('book')-&gt;select(['id', 'name'], append =&gt; "limit $offset, $count_per_page")-&gt;all;
+  
+  # 本の総数
+  my $total = $dbi-&gt;model('book')-&gt;select('count(*)')-&gt;value;
+  
+  # ページネーションオブジェクト
+  my $pager = Data::Page-&gt;new($total, $count_per_page, $page);
+  
+  # 前のページ
+  my $previous_page = $page-&gt;previous_page;
+  
+  # 次のページ
+  my $next_page = $page-&gt;next_page;
+  
+  # 最初のページ
+  my $first_page = $page-&gt;first_page;
+  
+  # 次のページ
+  my $last_page = $page-&gt;last_page;
+
+  # ページナビゲーションの個数を設定
+  $pager-&gt;pages_per_navigation(10);
+
+  # 周辺のページ番号を取得
+  my @nav_pages = $pager-&gt;pages_in_navigation;
+%&gt;
+
+  % for my $book (@$books) {
+    &lt;div&gt;
+      &lt;div&gt;本のID &lt;%= $book-&gt;{id} %&gt;&lt;/div&gt;
+      &lt;div&gt;本のタイトル &lt;%= $book-&gt;{name} %&gt;&lt;/div&gt;
+    &lt;/div&gt;
+  % }
+
   &lt;div&gt;
-    &lt;a href="&lt;%= url_with-&gt;query({page =&gt; undef}) %&gt;"&gt;先頭&lt;/a&gt;
+    &lt;a href="&lt;%= url_with-&gt;query({page =&gt; undef}) %&gt;"&gt;最初へ&lt;/a&gt;
     % if ($previous_page) {
-      &lt;a href="&lt;%= url_with-&gt;query({page =&gt; $previous_page}) %&gt;"&gt;前のページ&lt;/a&gt;
+      &lt;a href="&lt;%= url_with-&gt;query({page =&gt; $previous_page}) %&gt;"&gt;前へ&lt;/a&gt;
+    % }
+    % for my $nav_page (@nav_pages) {
+      % if ($nav_page eq $page) {
+        &lt;span&gt;&lt;%= $nav_page %&gt;&lt;/a&gt;
+      % } else {
+        &lt;a href="&lt;%= url_with-&gt;query({page =&gt; $nav_page}) %&gt;"&gt;$nav_page&lt;/a&gt;
+      % }
     % }
     % if ($next_page) {
-      &lt;a href="&lt;%= url_with-&gt;query({page =&gt; $next_page}) %&gt;"&gt;次のページ&lt;/a&gt;
+      &lt;a href="&lt;%= url_with-&gt;query({page =&gt; $next_page}) %&gt;"&gt;次へ&lt;/a&gt;
     % }
-    &lt;a href="&lt;%= url_with-&gt;query({page =&gt; $last_page}) %&gt;"&gt;最後&lt;/a&gt;
+    &lt;a href="&lt;%= url_with-&gt;query({page =&gt; $last_page}) %&gt;"&gt;最後へ&lt;/a&gt;
   &lt;/div&gt;
 </pre>
+<p>
+  $selfはMojolicious::Controllerです。appでMojoliciousを継承しているアプリケーションオブジェクトを取得します。dbiで、DBIx::Customオブジェクトを取得しています。
+</p>
+<p>
+  url_withとqueryへハッシュリファレンスを渡す方法を使用すると、現在のURLのクエリを維持しながら、ページ番号だけ置換することができます。
+</p>
+<h3>よくある質問</h3>
+<h4>where句と組み合わせることはできますか?</h4>
+<p>
+  はい、where句を組み合わせることができます。本のタイトルに、Perlを含むの例です。
+</p>
+<pre>
+  my $where = [
+    'title like :title', # where句
+    {title =&gt; '%Perl%'}, # パラメーター
+  ];
+  my $books = $dbi-&gt;model('book')-&gt;select(['id', 'name'], append =&gt; "limit $offset, $count_per_page", where =&gt; $where)-&gt;all;
+  my $total = $dbi-&gt;model('book')-&gt;select('count(*)', where =&gt; $where)-&gt;value;
+</pre>
+<h4>URLの他のクエリを残して、ページ番号だけを変えることはできますか?</h4>
+<p>
+  ここで解説したサンプルは、ページ番号だけの変更に対応しています。
+</p>
+<p>
+  url_forではなくurl_withを使うこと。queryメソッドの引数にハッシュリファレンス「{page => $page}」を渡すことがポイントです。
+</p>
 
   </div>
   <div class="bottom">
