@@ -141,28 +141,28 @@ my $pager = Data::Page-&gt;new($total, $count_per_page, $page);
   前のページを取得するには、previous_pageメソッドを使用します。前のページがない場合は、undefが返ってきます。
 </p>
 <pre>
-my $previous_page = $page-&gt;previous_page;
+my $previous_page = $pager-&gt;previous_page;
 </pre>
 <h4>次のページを取得</h4>
 <p>
   次のページを取得するには、next_pageメソッドを使用します。次のページがない場合は、undefが返ってきます。
 </p>
 <pre>
-my $next_page = $page-&gt;next_page;
+my $next_page = $pager-&gt;next_page;
 </pre>
 <h4>最初のページ番号</h4>
 <p>
   最初のページ番号を取得するにはfirst_pageメソッドを使用します。常に1を返します。
 </p>
 <pre>
-my $first_page = $page-&gt;first_page;
+my $first_page = $pager-&gt;first_page;
 </pre>
 <h4>最後のページ番号</h4>
 <p>
   最後のページ番号を取得するにはlast_pageメソッドを使用します。これは総ページ数と同じ値になります。
 </p>
 <pre>
-my $last_page = $page-&gt;last_page;
+my $last_page = $pager-&gt;last_page;
 </pre>
 <h3>ページナビゲーション機能</h3>
 <p>
@@ -177,7 +177,7 @@ my @nav_pages = $pager-&gt;pages_in_navigation;
 </pre>
 <h3>ページネーションのサンプルコード</h3>
 <p>
-  ページネーションのサンプルコードです。最初のページ、前のページ、次のページ、最後のページのサンプルです。
+  ページネーションのサンプルコードです。最初のページ、前のページ、次のページ、最後のページのサンプルです。ページが複数あるときだけ、ページネーションを表示するようにしています。
 </p>
 <h4>アプリケーションクラス</h4>
 <pre>
@@ -211,24 +211,6 @@ use Data::Page::Navigation;
   
   # ページネーションオブジェクト
   my $pager = Data::Page-&gt;new($total, $count_per_page, $page);
-  
-  # 前のページ
-  my $previous_page = $page-&gt;previous_page;
-  
-  # 次のページ
-  my $next_page = $page-&gt;next_page;
-  
-  # 最初のページ
-  my $first_page = $page-&gt;first_page;
-  
-  # 次のページ
-  my $last_page = $page-&gt;last_page;
-
-  # ページナビゲーションの個数を設定
-  $pager-&gt;pages_per_navigation(10);
-
-  # 周辺のページ番号を取得
-  my @nav_pages = $pager-&gt;pages_in_navigation;
 %&gt;
 
   % for my $book (@$books) {
@@ -237,24 +219,45 @@ use Data::Page::Navigation;
       &lt;div&gt;本のタイトル &lt;%= $book-&gt;{name} %&gt;&lt;/div&gt;
     &lt;/div&gt;
   % }
+  
+  &lt;%
+    # ページナビゲーションの個数を設定
+    $pager-&gt;pages_per_navigation(10);
+    
+    # 前のページ
+    my $previous_page = $pager-&gt;previous_page;
+    
+    # 次のページ
+    my $next_page = $pager-&gt;next_page;
+    
+    # 最初のページ
+    my $first_page = $pager-&gt;first_page;
+    
+    # 最後のページ
+    my $last_page = $pager-&gt;last_page;
 
-  &lt;div&gt;
-    &lt;a href="&lt;%= url_with-&gt;query({page =&gt; undef}) %&gt;"&gt;最初へ&lt;/a&gt;
-    % if ($previous_page) {
-      &lt;a href="&lt;%= url_with-&gt;query({page =&gt; $previous_page}) %&gt;"&gt;前へ&lt;/a&gt;
-    % }
-    % for my $nav_page (@nav_pages) {
-      % if ($nav_page eq $page) {
-        &lt;span&gt;&lt;%= $nav_page %&gt;&lt;/a&gt;
-      % } else {
-        &lt;a href="&lt;%= url_with-&gt;query({page =&gt; $nav_page}) %&gt;"&gt;$nav_page&lt;/a&gt;
+    # 周辺のページ番号を取得
+    my @nav_pages = $pager-&gt;pages_in_navigation;
+  %&gt;
+  % if ($first_page != $last_page) {
+    &lt;div class="pagenation"&gt;
+      &lt;a href="&lt;%= url_with-&gt;query({page =&gt; undef}) %&gt;"&gt;最初へ&lt;/a&gt;
+      % if ($previous_page) {
+        &lt;a href="&lt;%= url_with-&gt;query({page =&gt; $previous_page}) %&gt;"&gt;前へ&lt;/a&gt;
       % }
-    % }
-    % if ($next_page) {
-      &lt;a href="&lt;%= url_with-&gt;query({page =&gt; $next_page}) %&gt;"&gt;次へ&lt;/a&gt;
-    % }
-    &lt;a href="&lt;%= url_with-&gt;query({page =&gt; $last_page}) %&gt;"&gt;最後へ&lt;/a&gt;
-  &lt;/div&gt;
+      % for my $nav_page (@nav_pages) {
+        % if ($nav_page eq $page) {
+          &lt;span&gt;&lt;%= $nav_page %&gt;&lt;/a&gt;
+        % } else {
+          &lt;a href="&lt;%= url_with-&gt;query({page =&gt; $nav_page}) %&gt;"&gt;&lt;%= $nav_page %&gt;&lt;/a&gt;
+        % }
+      % }
+      % if ($next_page) {
+        &lt;a href="&lt;%= url_with-&gt;query({page =&gt; $next_page}) %&gt;"&gt;次へ&lt;/a&gt;
+      % }
+      &lt;a href="&lt;%= url_with-&gt;query({page =&gt; $last_page}) %&gt;"&gt;最後へ&lt;/a&gt;
+    &lt;/div&gt;
+  % }
 </pre>
 <p>
   $selfはMojolicious::Controllerです。appでMojoliciousを継承しているアプリケーションオブジェクトを取得します。dbiで、DBIx::Customオブジェクトを取得しています。
@@ -286,6 +289,70 @@ my $total = $dbi-&gt;model('book')-&gt;select('count(*)', where =&gt; $where)-&g
 <p>
   url_forではなくurl_withを使うこと。queryメソッドの引数にハッシュリファレンス「{page => $page}」を渡すことがポイントです。
 </p>
+<h4>ページネーションを部品化することはできますか?</h4>
+<p>
+  はい、ページネーションは、上下に表示したり、他のページと共有したい場合がありますね。
+</p>
+<p>
+  そのような場合は、include機能を使うことができます。
+</p>
+<p>
+  テンプレートファイル「templates/include/pagenation.html.ep」を作成します。
+</p>
+<p>
+  stashを使ってpagerを受け取ります。
+</p>
+<pre>
+  &lt;%
+    my $pager = stash('pager');
+    
+    # 現在のページ
+    my $page = $pager-&gt;current_page;
+    
+    # ページナビゲーションの個数を設定
+    $pager-&gt;pages_per_navigation(10);
+    
+    # 前のページ
+    my $previous_page = $pager-&gt;previous_page;
+    
+    # 次のページ
+    my $next_page = $pager-&gt;next_page;
+    
+    # 最初のページ
+    my $first_page = $pager-&gt;first_page;
+    
+    # 最後のページ
+    my $last_page = $pager-&gt;last_page;
+
+    # 周辺のページ番号を取得
+    my @nav_pages = $pager-&gt;pages_in_navigation;
+  %&gt;
+  % if ($first_page != $last_page) {
+    &lt;div class="pagenation"&gt;
+      &lt;a href="&lt;%= url_with-&gt;query({page =&gt; undef}) %&gt;"&gt;最初へ&lt;/a&gt;
+      % if ($previous_page) {
+        &lt;a href="&lt;%= url_with-&gt;query({page =&gt; $previous_page}) %&gt;"&gt;前へ&lt;/a&gt;
+      % }
+      % for my $nav_page (@nav_pages) {
+        % if ($nav_page eq $page) {
+          &lt;span&gt;&lt;%= $nav_page %&gt;&lt;/a&gt;
+        % } else {
+          &lt;a href="&lt;%= url_with-&gt;query({page =&gt; $nav_page}) %&gt;"&gt;&lt;%= $nav_page %&gt;&lt;/a&gt;
+        % }
+      % }
+      % if ($next_page) {
+        &lt;a href="&lt;%= url_with-&gt;query({page =&gt; $next_page}) %&gt;"&gt;次へ&lt;/a&gt;
+      % }
+      &lt;a href="&lt;%= url_with-&gt;query({page =&gt; $last_page}) %&gt;"&gt;最後へ&lt;/a&gt;
+    &lt;/div&gt;
+  % }
+</pre>
+<p>
+  使う側は、以下のようにします。
+</p>
+<pre>
+%= include 'include/pagenation', pager =&gt; $pager;
+</pre>
 
   </div>
   <div class="bottom">
