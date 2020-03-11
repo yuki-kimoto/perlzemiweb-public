@@ -6,7 +6,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0">
 <link rel="stylesheet" type="text/css" href="/css/common.css">
 
-<link rel="shortcut icon" href="/images/mojo-startup-logo.png">
+<link rel="shortcut icon" href="/images/site-logo.png">
 
 <script type="text/javascript" src="/js/jquery-1.9.0.min.js"></script>
 <script type="text/javascript" src="/js/google-code-prettify/prettify.js"></script>
@@ -28,7 +28,7 @@
   });
 </script>
 
-<title>Title - Mojoliciousスタートアップ - Perl新規Web開発</title>
+<title>Title - Webシステム開発入門 - Perl/MojoliciousでWebシステム開発</title>
 <meta name="description" content="#!/usr/bin/env perl">
   </head>
   <body>
@@ -36,7 +36,7 @@
       <div class="header">
         <!-- header -->
 <h1>
-  <a href="/">Mojoliciousスタートアップ - Perl新規Web開発</a>
+  <a href="/">Webシステム開発入門 - Perl/MojoliciousでWebシステム開発</a>
 </h1>
 
       </div>
@@ -140,7 +140,7 @@
     目次
   </div>
   <ul>
-    <li><a href="/list.html">記事の一覧</a></li>
+    <li><a href="/list.html">新着情報</a></li>
   </ul>
 </div>
 
@@ -148,7 +148,7 @@
       </div>
       <div class="footer">
         <!-- footer -->
-<a rel="nofollow" href="http://www.perlzemi.com">Perlゼミのプログラミングスクールはこちら</a> & <a rel="nofollow" href="https://jp.giblog.net/">このサイトはGiblogで製作されています</a>
+<a href="https://kimoto-system.co.jp/message">サイト運営 木本システム <br>Copyright © Yuki Kimoto</a>
 
       </div>
     </div>
