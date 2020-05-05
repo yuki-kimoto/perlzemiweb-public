@@ -28,7 +28,8 @@
   });
 </script>
 
-<title> - Webシステム開発入門 - Perl&Mojolicious</title>
+<title>よくある質問 - Webシステム開発入門 - Perl&Mojolicious</title>
+<meta name="description" content="Mojolicious::Plugin::AutoRouteというモジュールを使うと、テンプレートを配置するだけで、自動的にルーティングを作成してくれます。">
   </head>
   <body>
     <div class="container">
@@ -47,7 +48,25 @@
 
   </div>
   <div class="middle">
-    
+    <h2><a href="/blog/20200505152237.html">よくある質問</a></h2>
+<h3>ページごとのルーティングを自動的に設定する方法はありますか?</h3>
+<p>
+  Mojolicious::Plugin::AutoRouteというモジュールを使うと、テンプレートを配置するだけで、自動的にルーティングを作成してくれます。
+</p>
+<pre>
+# Mojolicious
+$self-&gt;plugin('AutoRoute');
+
+# Mojolicious::Lite
+plugin 'AutoRoute';
+
+# Option
+plugin 'AutoRoute', route =&gt; $r;
+</pre>
+<p>
+  <a href="https://tutorial.perlzemi.com/blog/20130731137527.html">ファイルを配置でルーティングを自動生成 - Mojolicious::Plugin::AutoRoute</a>
+</p>
+
   </div>
   <div class="bottom">
     
