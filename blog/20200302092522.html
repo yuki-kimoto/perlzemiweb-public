@@ -28,14 +28,15 @@
   });
 </script>
 
-<title> - Webシステム開発入門 - Perl/MojoliciousでWebシステム開発</title>
+<title>PerlとMojoliciousを使ったWebシステム開発入門 - Webシステム開発入門 - Perl&Mojolicious</title>
+<meta name="description" content="Webシステム開発入門は、MojoliciousというPerlのWebフレームワークを使ったWebシステム開発の入門講座です。">
   </head>
   <body>
     <div class="container">
       <div class="header">
         <!-- header -->
 <h1>
-  <a href="/">Webシステム開発入門 - Perl/MojoliciousでWebシステム開発</a>
+  <a href="/">Webシステム開発入門 - Perl&Mojolicious</a>
 </h1>
 
       </div>
@@ -47,17 +48,100 @@
 
   </div>
   <div class="middle">
-    
+    <h2><a href="/blog/20200302092522.html">PerlとMojoliciousを使ったWebシステム開発入門</a></h2>
+<p>
+  <b>Webシステム開発入門</b>は、<a href="https://mojolicious.perlzemi.com/">Mojolicious</a>という<a href="https://tutorial.perlzemi.com/">Perl</a>のWebフレームワークを使ったWebシステム開発の入門講座です。
+</p>
+<p>
+  Perlには、MojoliciousというWebアプリケーションを簡単に柔軟に作れるWebフレームワークがあります。
+</p>
+<p>
+  Mojoliciousを使うと、開発効率とパフォーマンスを両立させたWebシステムを構築することができます。
+</p>
+<h3>Mojoliciousの特徴</h3>
+<p>
+  Mojoliciousの特徴
+</p>
+<h4>組み込みの開発用サーバー</h4>
+<p>
+  Mojoliciousは、Linux環境で起動できる開発用Webサーバーを持っています。開発用Webサーバーを使うと、Webアプリケーションをローカルの環境で実行できるので、開発作業を早く繰り返すことができ、開発効率を高めます。
+</p>
+<h4>プリフォーク+非同期I/Oの本番用サーバー</h4>
+<p>
+  Mojoliciousは、Linux環境で起動できるパフォーマンスに最適化された本番用のWebサーバーを持っています。プリフォーク+非同期I/Oで、本番サーバーを起動します。
+</p>
+<p>
+  子プロセスをプリフォークすることによって、あらかじめHTTPリクエストが来るのに備えます。プリフォークでは、並列にリクエストを待つことができます。
+</p>
+<p>
+  それぞの子プロセスが非同期I/Oで、HTTPリクエストを受け取ります。非同期I/Oは、同時接続が1万をこえても、アーキテクチャーが耐える、スケーラブルな実装です。
+</p>
+<h4>ホットデプロイメント</h4>
+<p>
+  ホットデプロイメントは、本番サーバーで、サーバーを完全に止めることなく、サーバーを再起動するための技術です。HTTPリクエストの喪失が起こらないように、サーバーは再起動されます。
+</p>
+<h4>テンプレート</h4>
+<p>
+  Mojoliciousは、HTMLの出力に使うテンプレートを持っています。テンプレートの中で、Perlのコードを使って、動的に出力することが可能です。
+</p>
+<h4>JSONサポート</h4>
+<p>
+  MojoliciousのAPIは、JSONをサポートしています。AJAXでのJSONの受け取りや、JSONの描画も簡単です。
+</p>
+<h4>Web層に機能が限定</h4>
+<p>
+  MojoliciousはWeb層に機能が限定されたWebフレームワークです。データベースへアクセスは、Webフレームワークの機能として含んでいません。
+</p>
+<p>
+  データベースアクセスモジュール(例:<a href="https://dbix-custom.perlzemi.com/">DBIx::Custom</a>)は自由に選んで使えます。
+</p>
+<h4>非同期I/OのHTTPクライアント</h4>
+<p>
+  Mojoliciousは、非同期I/OのHTTPクライアントを含んでいます。外部サービスにHTTPリクエストを投げる場合に、ブロッキングすることなくHTTPリクエストを送信できます。
+</p>
+<h4>小さなWebアプリ</h4>
+<p>
+  Mojolicious::Liteと呼ばれるMojoliciousに含まれているモジュールを使うと、3行で、Webアプリを作成できます。
+</p>
+<pre>
+use Mojolicious::Lite;
+get '/' =&gt; sub { shift-&gt;render(text =&gt; 'Hello') };
+app-&gt;start;
+</pre>
+<p>
+  これは、画面にHelloと表示する一番小さなWebアプリケーションです。
+</p>
+<h4>互換性は高く、セキュリティ的にも安全</h4>
+<p>
+  Mojoliciousは、継続的にメンテナンスされており、セキュリティ問題が発生すると、すぐに修正されます。時々、互換性を壊れることがありますが、原則的には後方互換性は高く、アップグレードも簡単です。Perl自体も後方互換性が非常に高いです。
+</p>
+<h4>PerlのGCと相性が良い</h3>
+<p>
+  Perlは、リファレンスカウントGCと呼ばれる平均応答速度に最適化されたGCを持っています。
+</p>
+<p>
+  これは、Mojoliciousの非同期I/OのWebサーバーと相性が良いです。
+</p>
+<p>
+  非同期I/Oでは、平均待ち時間が小さいことが、パフォーマンスをよくするために非常に重要ですが、Perlは、平均応答速度に最適化されています。
+</p>
+<h3>Perl&MojoliciousでWebシステム開発を始めませんか?</h3>
+<p>
+  Perl&MojoliciousでWebシステム開発を始めまてみませんか?
+</p>
+<p>
+  PerlとMojoliciousの組み合わせは、Webシステム開発ととても相性が良いです。
+</p>
+<p>
+  簡潔な記述で高い開発効率、プリフォーク+非同期I/Oによる高い実行性能。
+</p>
+<p>
+  他の手法とぜひ比較してみてください。
+</p>
+
   </div>
   <div class="bottom">
-    <!-- bottom -->
-
-<div class="perlzemi-forum">
-  <a rel="nofollow" href="https://docs.google.com/forms/d/e/1FAIpQLSe6ypMTx5XTh2KbsIgqgPMXNrC5Bo9FKRPVHM_o0jvrH_k28A/viewform">
-    Perlゼミフォーラム - 環境構築・Perlプログラムの読み書きに困ったらここで質問(無料・5分で登録)
-  </a>
-</div>
-
+    
   </div>
 </div>
 
@@ -70,6 +154,15 @@
   </div>
   <ul>
     <li><a href="/list.html">新着情報</a></li>
+  </ul>
+  <div class="side-list-title">
+    案内
+  </div>
+  <ul>
+    <li><a href="https://tutorial.perlzemi.com/">Perlプログラミングを学ぶ</a></li>
+    <li><a href="https://mojolicious.perlzemi.com/">Mojolicious入門</a></li>
+    <li><a href="https://mojodoc.perlzemi.com/">Mojoliciousドキュメント</a></li>
+    <li><a href="https://mariadb.perlzemi.com/">MariaDB入門</a></li>
   </ul>
 </div>
 
