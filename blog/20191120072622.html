@@ -28,8 +28,8 @@
   });
 </script>
 
-<title>macOSにおけるWeb開発環境の構築 - Webシステム開発入門 - Perl&Mojolicious</title>
-<meta name="description" content="まず最初にmacOSにおける開発環境構築を行います。macOSは、2019年における、Macと呼ばれるOSの正式名称です。過去にはMac OS Xと呼ばれていることもありました。">
+<title>LinuxにおけるWeb開発環境の構築 - Webシステム開発入門 - Perl&Mojolicious</title>
+<meta name="description" content="Ubuntu, CentOS, DebianなどのLinuxサーバーにおけるWeb開発環境の構築について解説します。">
   </head>
   <body>
     <div class="container">
@@ -52,7 +52,7 @@
   <li itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">
     <a itemprop="item" href="/" class="bread-home">
       <span itemprop="name">
-        <img src="/images/bread/home.png" alt="Mojoliciousスタートアップ">
+        <img src="/images/bread/home.png" alt="Webシステム開発入門 Perl&Mojolicious">
       </span>
     </a>
     <meta itemprop="position" content="1" />
@@ -62,88 +62,106 @@
     here
   </li>
 </ol>
-<h2><a href="/blog/20191120072622.html">macOSにおけるWeb開発環境の構築</a></h2>
+<h2><a href="/blog/20191120072622.html">LinuxにおけるWeb開発環境の構築</a></h2>
 <p>
-  まず最初にmacOSにおける開発環境構築を行います。macOSは、2019年における、Macと呼ばれるOSの正式名称です。過去にはMac OS Xと呼ばれていることもありました。
+  Ubuntu, CentOS, DebianなどのLinuxサーバーにおけるWeb開発環境の構築について解説します。
 </p>
 <p>
-  macOSのベースはUnixで、開発環境として利用できるターミナルと呼ばれるCUI環境が付属しています。
+  LinuxサーバーにSSHを使って接続できていることは前提とします。
 </p>
+<h3>PerlでWebシステム開発環境を構築するための前提</h3>
 <p>
-  Unixというのは、サーバーの用途で広く利用されているOSのことです。
+  各Linuxにおいて、Perlをインストールすることの前提について書いておきます。yumやapt-getなど、パッケージのインストールコマンドがLinuxディストリビューションにおいて異なるので、必要な内容を書いておきます。
 </p>
+<h4>make</h4>
 <p>
-  Mojoliciousスタートアップで開発するPerlのWebアプリケーションは、Unix/Linux環境で実行されることを前提としています。
+  makeがインストールされていない場合はインストールしてください。
 </p>
+<pre>
+# CentOSの例
+sudo yum -y install make
+</pre>
 <p>
-  この環境にPerlとMojoliciousをインストールすると、macOS上で、Web開発を試すことができます。
+  makeは、Perlのモジュールをインストールするときに、その手順を実行するツールとして利用されます。
 </p>
+<h4>gcc</h4>
 <p>
-  CUI環境というのは、コマンドラインユーザーインターフェイスの略で、コマンド(文字列)をキーボードで記述することで、プログラムを実行できる環境のことをいいます。
+  gccがインストールされていない場合は、インストールしてください。
 </p>
-<h3>ターミナルの起動</h3>
+<pre>
+# CentOSの例
+sudo yum -y install gcc
+</pre>
 <p>
-  Mojoliciousスタートアップで開発するPerlのWebアプリケーションは、ターミナルと呼ばれるCUI環境を使って開発します。
+  gccは、PerlのモジュールでC拡張が使われている場合に、これをコンパイルするために必要です。
 </p>
+<h4>patch</h4>
 <p>
-  macOSには、ターミナルと呼ばれるソフトウェアが標準で添付されています。
+  patchがインストールされていない場合は、インストールしてください。
 </p>
+<pre>
+# CentOSの例
+sudo yum -y install patch
+</pre>
 <p>
-  まず作業の最初として、ターミナルを起動します。
+  patchは、perlbrewと呼ばれるPerlのインストールツールを使う場合に必要です。
 </p>
+<h4>openssl</h4>
 <p>
-  ターミナルを起動する方法は、以下の記事を参考になります。
+  opensslがインストールされていない場合は、インストールしてください。opensslのコマンドに加えて、opensslのライブラリ(openssl-devel。名前はLinuxディストリビューションで異なる)もインストールします。
+</p>
+<pre>
+# CentOSの例
+sudo yum -y install openssl
+sudo yum -y install openssl-devel
+</pre>
+<p>
+  opensslは、Perlとは直接的には、関係がありませんが、最近のWebがHTTPSで接続することを、求められるため、あらかじめインストールしておきましょう。
+</p>
+<h4>git</h4>
+<p>
+  gitがインストールされていない場合は、インストールしてください。
+</p>
+<pre>
+# CentOSの例
+sudo yum -y git
+</pre>
+<p>
+  gitは、Perlとは直接関係がありませんが、Webシステム開発におけるソースコード管理に使うので、インストールしておきましょう。
+</p>
+<h4>システムPerl</h4>
+<p>
+  Webシステム開発には、ユーザー環境にインストールするPerlを使うのですが、システムPerlもインストールしておいた方が、何かと便利でしょう。
+</p>
+<pre>
+# CentOSの例
+sudo yum -y install perl perl-core
+</pre>
+<h3>Perlのユーザー環境へのインストール</h3>
+<p>
+  次にPerlをインストールしましょう。Perlをユーザー環境にインストールします。以下の記事の「ユーザー環境へのPerlのインストール」という部分です。
 </p>
 <ul>
-  <li><a href="https://syncer.jp/mac-terminal">Macでターミナルを起動する方法</a></li>
+  <li><a href="https://tutorial.perlzemi.com/blog/20180813153411.html">LinuxへのPerlのインストール</a></li>
 </ul>
 <p>
-  うまくターミナルが起動しましたか。
-</p>
-<h3>Command Line Toolsのインストール</h3>
-<p>
-  まず最初にCommand Line Toolsと呼ばれるものをインストールします。これは、macOSに、Perlをインストールする前提として、必要になるものです。Xcodeのインストールでもかまいませんが、こちらは容量が大きいです。Command Line Toolsは、容量が小さく、CUI環境で必要となるものだけをインストールできます。
+  Webシステム開発を行う場合は、コアPerlではなく、上記手順でインストールしたものを使います。一番大きな理由は、CPANというサイトからモジュールをインストールするのに、ユーザー環境にPerlをインストールしておくのが、簡単で便利だからです。
 </p>
 <p>
-  Command Line Toolsのインストールは管理者権限で実行します。
-</p>
-<p>
-  Command Line Toolsをインストールするには、以下の記事を参考になります。
-</p>
-<ul>
-  <li><a href="https://se-note.tenouti.com/archives/581">Command Line Toolsのインストール</a></li>
-</ul>
-<p>
-  うまくCommand Line Toolsがインストールできましたか。
-</p>
-<h3>Perlのインストール</h3>
-<p>
-  次にPerlをインストールしましょう。
-</p>
-<p>
-  macOSへのPerlのインストール方法は、Perl入門ゼミの以下の記事で解説されていますので、チャレンジしてみましょう。perlbrewまたは、plenvというツールを使って、Perlをインストールします。選択はお好みで。
-</p>
-<ul>
-  <li><a href="https://tutorial.perlzemi.com/blog/20180814153419.html">macOSへのPerlのインストール</a></li>
-</ul>
-<p>
-  macOSには、Perlがデフォルトで利用可能ですが、Web開発で使うPerlは、上記手順でインストールしたものを使います。一番大きな理由は、CPANというサイトからモジュールをインストールするのに、デフォルトのPerlでは、うまくいかないからです。モジュールというのは、プログラムの部品という意味です。
+  また、Perlだけのアップグレードをすることも、システムPerlに依存せずにできます。
 </p>
 <h3>Mojoliciousのインストール</h3>
 <p>
-  最後に、macOSへのPerlのインストールで、インストールしたcpanmというツールを使ってMojoliciousをインストールします。
+  最後に、LinuxへのPerlのインストールでインストールしたcpanmというツールを使ってMojoliciousをインストールします。
 </p>
 <pre>
 cpanm Mojolicious
 </pre>
 <p>
-  インストールお疲れさまでした。
+  Webシステム開発環境の構築お疲れさまでした。
 </p>
 <p>
-  無事に、Command Line Tools、Perl、Mojoliciousのインストールが完了しましたか? 
-</p>
-<p>
-  外部リンクが切れている場合、インストールで困ったという場合は、Perlゼミフォーラムで質問できるので、ご利用ください。
+  (UbuntuとDebianにおけるCentOSにおけるyumに該当する部分を記述できる方、お手伝い募集中)
 </p>
 
   </div>
