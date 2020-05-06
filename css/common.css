@@ -15,8 +15,10 @@
   
   .entry img {
     max-width:100%;
+    margin-left:auto;
+    margin-right:auto;
+    display:block;
   }
-  
   /* header */
   .header {
     margin:0 auto;
@@ -92,7 +94,8 @@
   }
   ul li {
     line-height:1.5;
-    list-style:none;
+    list-style:dotted;
+    margin-left:40px;
   }
   
   /* side */

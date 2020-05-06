@@ -52,6 +52,9 @@
 <p>
   会員登録フォームを作成します。Webシステム開発入門では、メールアドレスがユーザーIDになる会員登録の実装方法を解説します。
 </p>
+<p>
+  <img src="/images/acount/new_acount_form.png">
+</p>
 <h3>会員登録のユーザー情報</h3>
 <p>
   会員登録に最低限必要なものは以下です。
@@ -70,10 +73,10 @@
 <pre>
 &lt;div class="signup"&gt;
   &lt;form action="&lt;%= url_for %&gt;" method="POST"&gt;
-    &lt;div class="signup-title"&gt;会員登録&lt;/div&gt;
+    &lt;div class="signup-title"&gt;新規アカウントを作成&lt;/div&gt;
     &lt;%= text_field 'mail', placeholder =&gt; 'メールアドレス' %&gt;
     &lt;%= password_field 'password', placeholder =&gt; 'パスワード' %&gt;
-    &lt;%= submit_button '会員登録する' %&gt;
+    &lt;%= submit_button 'アカウント登録' %&gt;
     &lt;%= hidden_field 'op' =&gt; 'register' %&gt;
   &lt;/form&gt;
 &lt;/div&gt;
@@ -113,19 +116,19 @@
 <pre>
   /* 会員登録 */
   .signup {
+    background:#fafafa;
+    padding:70px 0;
+  }
+  .signup form {
     width:calc(100% - 15px);
     max-width:500px;
-    margin-top:20px;
     margin-left:auto;
     margin-right:auto;
-    padding:10px;
-    border:1px solid #ddd;
-    border-radius:5px;
   }
   .signup-title {
     font-weight:bold;
     text-align:center;
-    font-size:18px;
+    font-size:28px;
   }
   .signup input[type=text], .signup input[type=password] {
     display:block;
@@ -134,7 +137,7 @@
     margin-right:auto;
     margin-top:12px;
     margin-bottom:12px;
-    padding:8px 10px;
+    padding:17px 10px 15px 10px;
     border-radius:3px;
     border:1px solid #ddd;
     font-size:16px;
@@ -148,9 +151,10 @@
     background:#D82E5D;
     border:1px solid #D82E5D;
     color:white;
-    padding:10px 0;
+    padding:15px 0 13px 0;
     border-radius:5px;
     cursor:pointer;
+    font-size:20px;
   }
 </pre>
 <h4>会員登録フォームのルーティング</h4>
