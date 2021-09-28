@@ -54,7 +54,7 @@
 </p>
 <h3>送信されたユーザー情報を取得する</h3>
 <p>
-  送信されたユーザー情報は、パラメーターから取得します。ユーザー情報が入ったパラメーターを取得するには<a href="https://tutorial.perlzemi.com/blog/20110501130707.html">paramメソッド</a>を使用します。
+  送信されたユーザー情報は、パラメーターから取得します。ユーザー情報が入ったパラメーターを取得するには<a href="https://perlzemi.com/blog/20110501130707.html">paramメソッド</a>を使用します。
 </p>
 <p>
   <a href="/blog/20200107082558.html">会員登録フォーム</a>からPOSTされた情報を受け取ってみましょう。この処理では、POSTであって、仮登録の処理であるかを、事前に確認しています。
@@ -101,7 +101,7 @@
 </p>
 <h4>ユーザーIDが指定されていること</h4>
 <p>
-  まず最初に、ユーザーIDが空ではないことを確認しましょう。エラーは、$errorsという<a href="https://tutorial.perlzemi.com/blog/20180208151809.html">ハッシュのリファレンス</a>に保存しておきます。文字列の長さは、<a href="https://tutorial.perlzemi.com/blog/20080926122245.html">length関数</a>で取得できます。
+  まず最初に、ユーザーIDが空ではないことを確認しましょう。エラーは、$errorsという<a href="https://perlzemi.com/blog/20180208151809.html">ハッシュのリファレンス</a>に保存しておきます。文字列の長さは、<a href="https://perlzemi.com/blog/20080926122245.html">length関数</a>で取得できます。
 </p>
 <pre>
 my $errors = {};
@@ -119,7 +119,7 @@ else {
   ユーザーIDが、ASCIIコードの英数字とアンダーバーの1文字(a-zA-Z0-9_)以上で構成されていることをチェックするには、Perlの正規表現を使いましょう。
 </p>
 <p>
-  <a href="https://tutorial.perlzemi.com/blog/20100827127859.html">正規表現</a>は以下の二つのどちらかで表現できます。素直に<a href="https://tutorial.perlzemi.com/blog/20200114103559.html">文字クラス</a>で書くか、PerlのASCIIコードで構成されたワード文字を表現する文字クラスを使います。
+  <a href="https://perlzemi.com/blog/20100827127859.html">正規表現</a>は以下の二つのどちらかで表現できます。素直に<a href="https://perlzemi.com/blog/20200114103559.html">文字クラス</a>で書くか、PerlのASCIIコードで構成されたワード文字を表現する文字クラスを使います。
 </p>
 <pre>
 # 文字クラスで素直に書く
@@ -150,7 +150,7 @@ else {
   グローバルに利用されている、Twitterというサービスでは、ユーザーIDは15文字以内となっています。
 </p>
 <p>
-  Mojoliciousスタートアップでは、これを参考にして、ユーザーIDの長さの制限は、15文字以内にします。文字列の長さは、<a href="https://tutorial.perlzemi.com/blog/20080926122245.html">length関数</a>で取得できます。
+  Mojoliciousスタートアップでは、これを参考にして、ユーザーIDの長さの制限は、15文字以内にします。文字列の長さは、<a href="https://perlzemi.com/blog/20080926122245.html">length関数</a>で取得できます。
 </p>
 <pre>
 # ユーザー名の長さの制限 15文字
@@ -182,7 +182,7 @@ else {
     講座作成
   </div>
   <ul  style="margin-bottom:30px">
-    <li style="text-align:center;padding-left:0"><a href="http://www.perlri.com/"><img width="110" src="https://tutorial.perlzemi.com/images/kaeru_w_01.png"><br>初心者からはじめて<br>プロのWeb開発者<br>になれる講座なら<br>Perl元気塾</a></li>
+    <li style="text-align:center;padding-left:0"><a href="https://perlclub.net/"><img width="110" src="https://perlzemi.com/images/kaeru_w_01.png"><br>初心者からはじめて<br>プロのWeb開発者<br>になれる講座なら<br>Perlクラブ</a></li>
   </ul>
   <div class="side-list-title">
     新着情報
@@ -194,11 +194,11 @@ else {
     関連講座
   </div>
   <ul>
-    <li><a href="https://tutorial.perlzemi.com/">Perlプログラミングを学ぶ</a></li>
+    <li><a href="https://perlzemi.com/">Perlプログラミングを学ぶ</a></li>
     <li><a href="https://mojolicious.perlzemi.com/">Mojolicious入門</a></li>
     <li><a href="https://mojodoc.perlzemi.com/">Mojoliciousドキュメント</a></li>
-    <li><a href="https://webdesign.perlzemi.com/">Webデザイン入門</a></li>
-    <li><a href="https://mariadb.perlzemi.com/">MariaDB入門</a></li>
+    <li><a href="https://htmlcss.perlclub.net/">HTML・CSS入門</a></li>
+    <li><a href="https://mariadb.perlclub.net/">MariaDB入門</a></li>
   </ul>
 </div>
 
@@ -207,13 +207,13 @@ else {
       <div class="footer">
         <div class="what_is_this_site">
   <div class="inside">
-    現在このサイトは、ほぼ書きかけの状態です。<a href="https://tutorial.perlzemi.com/">Perl</a>を使った<b>Webシステム開発</b>の方法を解説します。ECサイトを作成し、商品の登録・更新・削除・検索ができるようになることが目標です。会員登録、ログイン機能、メール送信、メール認証、セッション管理の方法も解説します。データベースには<a href="https://mariadb.perlzemi.com/">MariaDB</a>、データベースアクセスモジュールはDBIをベースにした<a href="https://dbix-custom.perlzemi.com/">DBIx::Custom</a>、Webフレームワークには<a href="https://mojolicious.perlzemi.com/">Mojolicious</a>を使用予定です。サーバーは、<a href="https://www.ubuntu-perl-web.com/">Ubuntu</a>, <a href="https://centos.perlzemi.com/">CentOS</a>, Debian, FreeBSDなどの<a href="https://linux.perlzemi.com/">Unix/Linux</a>で動かします。
+    現在このサイトは、ほぼ書きかけの状態です。<a href="https://perlzemi.com/">Perl</a>を使った<b>Webシステム開発</b>の方法を解説します。ECサイトを作成し、商品の登録・更新・削除・検索ができるようになることが目標です。会員登録、ログイン機能、メール送信、メール認証、セッション管理の方法も解説します。データベースには<a href="https://mariadb.perlclub.net/">MariaDB</a>、データベースアクセスモジュールはDBIをベースにした<a href="https://dbix-custom.perlzemi.com/">DBIx::Custom</a>、Webフレームワークには<a href="https://mojolicious.perlzemi.com/">Mojolicious</a>を使用予定です。サーバーは、<a href="https://ubuntu.perlclub.net/">Ubuntu</a>, <a href="https://centos.perlclub.net/">CentOS</a>, Debian, FreeBSDなどの<a href="https://linux.perlclub.net/">Unix/Linux</a>で動かします。
   </div>
 </div>
 
 <div class="perlri_link">
-  <a href="http://www.perlri.com">
-    初心者からはじめて<br>プロのWeb開発者<br>になれる講座なら<br>Perl元気塾
+  <a href="https://perlclub.net">
+    初心者からはじめて<br>プロのWeb開発者<br>になれる講座なら<br>Perlクラブ
   </a>
 </div>
 
